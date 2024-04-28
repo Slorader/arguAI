@@ -1,0 +1,58 @@
+.sideBar {
+    display: flex;
+    flex-direction: column;
+    width: 240px;
+    height: 100%;
+    border-right: #342F2E 1px solid;
+
+}
+
+.sideBar .logo {
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+.sideBar .logo img {
+    width: 150px;
+}
+
+.settings {
+    display: flex;
+    align-items: center;
+    height: 50px;
+    margin: 20px 15px 0 15px;
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+    transition: all ease 0.3s;
+}
+
+.settings .user-icon {
+    background: #342F2E;
+    width: 32px;
+    height: 32px;
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 500;
+    margin-right: 10px;
+    margin-left: 10px;
+    font-size: 12px;
+
+
+}
+
+.settings:hover{
+    background: red;
+    transition: all ease 0.3s;
+}
+
+.settings .material-symbols-rounded {
+    position: absolute;
+    right: 10px;
+    font-size: 15px;
+}
+
+
+

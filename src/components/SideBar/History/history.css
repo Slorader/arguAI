@@ -1,0 +1,25 @@
+.history {
+    display: flex;
+    flex-direction: column;
+    padding: 0 20px;
+    height: 550px;
+}
+
+.history .time p {
+    color: #92908F;
+    font-size: 15px;
+    margin-bottom: 15px;
+}
+
+.history .time {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.history a {
+    text-decoration: none;
+    color: white;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
