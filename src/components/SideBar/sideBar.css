@@ -4,7 +4,7 @@
     width: 240px;
     height: 100%;
     border-right: #342F2E 1px solid;
-
+    position: relative;
 }
 
 .sideBar .logo {
@@ -43,16 +43,77 @@
 
 }
 
-.settings:hover{
-    background: red;
+.sideBar .settings:hover{
+    background: #342f2e;
     transition: all ease 0.3s;
 }
 
-.settings .material-symbols-rounded {
+.sideBar .settings .material-symbols-rounded {
     position: absolute;
     right: 10px;
     font-size: 15px;
 }
 
+.sideBar .modal-settings {
+    display: flex;
+    flex-direction: column;
+    width: 208px;
+    position: absolute;
+    left: 50%;
+    bottom: 90px;
+    border-radius: 10px;
+    border: #342F2E 1px solid;
+    z-index: 3;
+    margin-left: -104px;
+}
 
+.sideBar .modal-settings.animate__animated {
+    animation-duration: 500ms;
+}
 
+.sideBar .modal-settings .user-infos {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    border-radius: 10px;
+    padding: 0 10px;
+    margin-bottom: 15px;
+    margin-top: 10px;
+}
+
+.sideBar .modal-settings .user-infos p {
+    font-weight: 200;
+}
+
+.sideBar .modal-settings .user-infos p {
+    color: #92908F;
+    font-size: 12px;
+    font-weight: 200;
+}
+
+.sideBar .modal-settings .settings-line {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 0 10px;
+    transition: ease all 0.3s;
+    cursor: pointer;
+    height: 40px;
+}
+
+.sideBar .modal-settings .settings-line:hover {
+    transition: ease all 0.3s;
+    background: #342f2e;
+}
+.sideBar .modal-settings .settings-line a {
+    font-weight: 300;
+    font-size: 15px;
+    text-decoration: none;
+}
+
+.sideBar .modal-settings .settings-line span {
+    position: absolute;
+    right: 0;
+    transform: translateX(-50%);
+    font-weight: 200;
+}
