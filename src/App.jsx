@@ -13,12 +13,14 @@ function App() {
         setIsSideBarOpen(!isSideBarOpen);
     };
 
-    const sidebarClass = `sideBar ${isSideBarOpen ? '' : 'closed '}`;
+    const sidebarClass = `sideBar ${isSideBarOpen ? '' : 'sideBar-closed '}`;
+    const chatClass = `chat ${isSideBarOpen ? '' : 'chat-fullscreen '}`;
+
 
     return (
         <>
             <SideBar  className={sidebarClass} />
-            <Chat handleSideBar={handleSideBar} isSideBarOpen={isSideBarOpen} />
+            <Chat handleSideBar={handleSideBar} isSideBarOpen={isSideBarOpen} className={chatClass} />
         </>
     );
 }

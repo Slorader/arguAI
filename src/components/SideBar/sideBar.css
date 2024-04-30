@@ -11,7 +11,7 @@
     transition: transform 0.3s ease-out;
 }
 
-.sideBar.closed {
+.sideBar-closed {
     transform: translateX(-100%);
     transition: transform 0.3s ease-out;
 }
