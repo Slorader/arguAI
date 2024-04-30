@@ -7,7 +7,7 @@
 
 .history .time p {
     color: #92908F;
-    font-size: 15px;
+    font-size: 13px;
     margin-bottom: 15px;
 }
 
@@ -17,9 +17,54 @@
     margin-bottom: 15px;
 }
 
-.history a {
-    text-decoration: none;
-    color: white;
-    font-weight: 800;
+.history .time .text {
+    display: flex;
+    cursor: pointer;
     margin-bottom: 10px;
 }
+
+.history .time .text:hover button{
+    display: flex;
+}
+
+.history .time .text:hover a {
+    color: #92908F;
+    transition: ease all 0.3s;
+}
+
+.history .time .text a {
+    text-decoration: none;
+    color: white;
+    font-weight: 500;
+    padding: 5px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 13px;
+}
+
+.history .time .text a:last-child {
+    margin-bottom: 0;
+}
+
+.history .time .text button {
+    background: none;
+    border: none;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    display: none;
+}
+
+.history .time .text button:hover {
+    background: #92908F;
+    transition: ease all 0.3s;
+    border-radius: 20px;
+}
+
+.history .time .text button span {
+    color: white;
+    font-weight: 200;
+    font-size: 22px;
+}
+

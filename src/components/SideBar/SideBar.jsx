@@ -3,8 +3,7 @@ import History from './History/History.jsx'
 import {useState} from "react";
 import 'animate.css';
 
-
-const SideBar = () =>
+const SideBar = ({className}) =>
 {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const handleSettingsClick = () => {
@@ -13,13 +12,13 @@ const SideBar = () =>
 
     return (
 
-        <div className="sideBar">
+        <div className={className}>
             <div className="logo">
                 <img src={Logo} alt="logo"/>
             </div>
             <History/>
             <div className="settings" onClick={handleSettingsClick}>
-                <span className="user-icon">LT</span>
+                <span className="user-icon"><span>LT</span></span>
                 <p>Léo Trux</p>
                 <span  className="material-symbols-rounded">
                     expand_all

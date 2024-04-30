@@ -1,4 +1,9 @@
 
+:root {
+    --main-color: #EA580C;
+    --border: #342F2E;
+    --background: #171311;
+}
 
 * {
     margin: 0;
@@ -15,4 +20,5 @@ body {
 
 #root {
     height: 100%;
+    display: flex;
 }
