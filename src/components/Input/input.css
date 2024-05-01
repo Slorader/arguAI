@@ -1,0 +1,72 @@
+
+
+.input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 30px;
+}
+
+
+.input input {
+    height: 50px;
+    background: var(--background);
+    border: var(--border) 1px solid;
+    border-radius: 10px;
+    outline: none;
+    color: white;
+    padding: 10px;
+    width: 100%;
+    transition: all .3s;
+}
+
+.input input:focus {
+    border: #EA580C 1px solid;
+    transition: all .3s;
+}
+
+.input input:focus + label {
+    transform: translateY(-25px);
+    background: #171311;
+    z-index: 3;
+    font-size: 13px;
+    padding: 2px;
+    color: #EA580C;
+    transition: all .3s ease
+}
+
+.input input:valid + label {
+    background: #171311;
+    z-index: 3;
+    font-size: 13px;
+    padding: 2px;
+    transition: all .3s ease
+}
+
+.input input:focus + label{
+    color: #EA580C;
+    transition: all .3s ease
+}
+
+.input label {
+    position: absolute;
+    font-size: 15px;
+    color: #92908F;
+    font-weight: 300;
+    left: 11px;
+    cursor: text;
+    transition: all .3s ease;
+
+}
+
+.input label.active {
+    transform: translateY(-25px);
+    background: #171311;
+    z-index: 3;
+    font-size: 13px;
+    padding: 2px;
+}
+
+
+

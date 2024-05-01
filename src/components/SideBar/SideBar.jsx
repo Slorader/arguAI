@@ -11,12 +11,12 @@ const SideBar = ({className, handleModal, setModalOptions}) =>
     }
 
     const handleProfileButton = () => {
-        setModalOptions({title : 'Account settings'});
+        setModalOptions({title : 'Account settings', size: "large"});
         handleModal();
     }
 
     const handleDeletedButton = () => {
-        setModalOptions({title : 'Chats deleted'});
+        setModalOptions({title : 'Chats deleted', size: 'medium'});
         handleModal();
     }
 
