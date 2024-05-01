@@ -18,7 +18,7 @@ const SideBar = ({className}) =>
             </div>
             <History/>
             <div className="settings" onClick={handleSettingsClick}>
-                <span className="user-icon"><span>LT</span></span>
+                <div className="user-icon"><span>LT</span></div>
                 <p>Léo Trux</p>
                 <span  className="material-symbols-rounded">
                     expand_all

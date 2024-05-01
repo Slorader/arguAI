@@ -2,7 +2,7 @@ import Tool from "./Tool/Tool.jsx";
 import Logo from '../../../public/images/AR_notext_white.png'
 import {useRef, useState, useEffect} from "react";
 
-const Chat = ({ handleSideBar, isSideBarOpen, className }) => {
+const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal }) => {
     const handleArrowButton = () => {
         if (isSideBarOpen) {
             return <Tool name="arrow_back_ios" infos="Close" onClick={handleSideBar} />;
@@ -20,15 +20,14 @@ const Chat = ({ handleSideBar, isSideBarOpen, className }) => {
 
             textAreaRef.current.style.height = "auto";
             textAreaRef.current.style.height = textAreaRef.current.scrollHeight + "px";
-            console.log(textAreaRef);
             }, [val])
 
     return (
         <div className={className}>
             <div className="tools">
                 {handleArrowButton()}
-                <Tool name="add_circle" infos="New chat" />
-                <Tool name="download" infos="Download" />
+                <Tool name="add_circle" infos="New chat"  />
+                <Tool name="download" infos="Download" onClick={handleModal} />
             </div>
             <div className="chat-container">
                 <div className="logo">

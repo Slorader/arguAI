@@ -50,6 +50,13 @@
     font-size: 12px;
 }
 
+.settings p {
+    font-size: 15px;
+}
+
+.settings .user-icon span {
+    margin-top: 3px;
+}
 .sideBar .settings:hover{
     background: #342f2e;
     transition: all ease 0.3s;
