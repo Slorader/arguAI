@@ -3,11 +3,21 @@ import History from './History/History.jsx'
 import {useState} from "react";
 import 'animate.css';
 
-const SideBar = ({className}) =>
+const SideBar = ({className, handleModal, setModalOptions}) =>
 {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const handleSettingsClick = () => {
         setIsModalOpen(!isModalOpen);
+    }
+
+    const handleProfileButton = () => {
+        setModalOptions({title : 'Account settings'});
+        handleModal();
+    }
+
+    const handleDeletedButton = () => {
+        setModalOptions({title : 'Chats deleted'});
+        handleModal();
     }
 
     return (
@@ -29,13 +39,13 @@ const SideBar = ({className}) =>
                     <span>Léo Trux</span>
                     <p>truxleo@gmail.com</p>
                 </div>
-                <div className="settings-line">
+                <div className="settings-line" onClick={handleDeletedButton}>
                     <a>Chats deleted</a>
                     <span className="material-symbols-rounded">
                         delete
                     </span>
                 </div>
-                <div className="settings-line">
+                <div className="settings-line" onClick={handleProfileButton}>
                     <a>Profile</a>
                     <span className="material-symbols-rounded">
                         account_circle

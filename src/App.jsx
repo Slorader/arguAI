@@ -15,10 +15,12 @@ function App() {
         setIsSideBarOpen(!isSideBarOpen);
     };
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
     const sidebarClass = `sideBar ${isSideBarOpen ? '' : 'sideBar-closed '}`;
     const chatClass = `chat ${isSideBarOpen ? '' : 'chat-fullscreen '}`;
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalOptions, setModalOptions] = useState([]);
+
 
     const handleModal = () => {
         setIsModalOpen(!isModalOpen);
@@ -27,9 +29,19 @@ function App() {
 
     return (
         <>
-            <SideBar  className={sidebarClass} />
-            <Chat handleSideBar={handleSideBar} isSideBarOpen={isSideBarOpen} handleModal = {handleModal} className={chatClass} />
-            {isModalOpen && <Modal handleModal = {handleModal}/>}
+            <SideBar  className={sidebarClass}
+                      handleModal = {handleModal}
+                      setModalOptions = {setModalOptions}
+
+            />
+            <Chat handleSideBar={handleSideBar}
+                  isSideBarOpen={isSideBarOpen}
+                  handleModal = {handleModal}
+                  className={chatClass}
+                  setModalOptions = {setModalOptions}
+
+            />
+            {isModalOpen && <Modal handleModal = {handleModal} modalOptions = {modalOptions} />}
         </>
     );
 }

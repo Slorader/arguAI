@@ -2,7 +2,7 @@ import Tool from "./Tool/Tool.jsx";
 import Logo from '../../../public/images/AR_notext_white.png'
 import {useRef, useState, useEffect} from "react";
 
-const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal }) => {
+const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOptions}) => {
     const handleArrowButton = () => {
         if (isSideBarOpen) {
             return <Tool name="arrow_back_ios" infos="Close" onClick={handleSideBar} />;
@@ -22,12 +22,17 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal }) => {
             textAreaRef.current.style.height = textAreaRef.current.scrollHeight + "px";
             }, [val])
 
+    const handleExportButton = () => {
+        setModalOptions({title : 'Export', size: 'small'});
+        handleModal();
+    };
+
     return (
         <div className={className}>
             <div className="tools">
                 {handleArrowButton()}
                 <Tool name="add_circle" infos="New chat"  />
-                <Tool name="download" infos="Download" onClick={handleModal} />
+                <Tool name="download" infos="Download" onClick={handleExportButton} />
             </div>
             <div className="chat-container">
                 <div className="logo">
@@ -46,7 +51,7 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal }) => {
                             <span className="material-symbols-rounded">arrow_right_alt</span>
                         </button>
                     </div>
-                    <p>This is a beta version. Results may be inaccurate</p>
+                    <p>This is a beta version. Results may be inaccurate.</p>
                 </div>
             </div>
         </div>
