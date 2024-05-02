@@ -7,6 +7,13 @@
     transition: transform 0.3s ease-out;
 }
 
+.home {
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    flex-direction: column;
+}
+
 .chat-fullscreen {
     min-width: 100vw;
     height: 100vh;
@@ -16,11 +23,10 @@
 }
 
 .chat-container {
-    margin: 0 100px;
+    margin: 0 200px;
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
 }
 
@@ -150,4 +156,12 @@
     font-weight: 200;
     font-size: 13px;
     font-style: italic;
+}
+
+/* part chat message */
+
+.chat .chat-container .message-container {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
 }
