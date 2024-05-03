@@ -96,3 +96,48 @@
 .login .login-container .login-form .form .input-line .input:last-child {
     margin-right: 0;
 }
+
+
+@media screen and (max-width: 1148px) {
+
+    .login .login-container {
+        justify-content: center;
+        align-items: center;
+    }
+
+    .login .login-container .infos {
+        display: none;
+    }
+
+    .login .login-container .login-form {
+        width: auto;
+    }
+
+}
+
+@media screen and (max-width: 762px) {
+    .login .login-container {
+        margin: 0 50px;
+    }
+}
+
+
+@media screen and (max-width: 456px) {
+    .login .login-container {
+        margin: 0 20px;
+    }
+
+    .login .login-container .login-form .title span {
+        font-size: 30px;
+    }
+
+    .login .login-container .login-form .register span,
+    .login .login-container .login-form .register a {
+        font-size: 12px;
+    }
+
+    .login .login-logo {
+        margin-bottom: 20px;
+    }
+}
+

@@ -33,7 +33,7 @@ const Login = () => {
                     <div className="form">
                         <Input typeInput="email" nameInput="Email" idInput="login-email"></Input>
                         <Input typeInput="password" nameInput="Password" idInput="password-email"></Input>
-                        <Button name="Log in"></Button>
+                        <Button type="sumbit" name="Log in"></Button>
                     </div>
                 </div>
             </div>

@@ -16,7 +16,6 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
 
     const textAreaRef = useRef(null)
     const [val, setVal] = useState("");
-    const homeContainer = useRef(null);
     const [isChat, setIsChat] = useState(false);
     const [isHome, setIsHome] = useState(true);
 

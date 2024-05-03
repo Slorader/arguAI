@@ -1,11 +1,11 @@
 
 
-const Button = ({name}) => {
+const Button = (props) => {
 
     return (
         <div className='btn'>
-            <button>
-                {name}
+            <button type={props.type}>
+                {props.name}
             </button>
         </div>
     )

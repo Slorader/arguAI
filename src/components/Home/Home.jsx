@@ -32,7 +32,7 @@ const Home = () => {
             <SideBar  className={sidebarClass}
                       handleModal = {handleModal}
                       setModalOptions = {setModalOptions}
-
+                      handleSideBar={handleSideBar}
             />
             <Chat handleSideBar={handleSideBar}
                   isSideBarOpen={isSideBarOpen}

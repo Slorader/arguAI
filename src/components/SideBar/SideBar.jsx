@@ -1,9 +1,11 @@
 import Logo from '../../../public/images/AR_white.png'
 import History from './History/History.jsx'
+import Tool from "../Chat/Tool/Tool.jsx";
+import '../Chat/chat.css'
 import {useState} from "react";
 import 'animate.css';
 
-const SideBar = ({className, handleModal, setModalOptions}) =>
+const SideBar = ({className, handleModal, setModalOptions, handleSideBar}) =>
 {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const handleSettingsClick = () => {
@@ -25,6 +27,7 @@ const SideBar = ({className, handleModal, setModalOptions}) =>
         <div className={className}>
             <div className="logo">
                 <img src={Logo} alt="logo"/>
+                <Tool name="arrow_back_ios" infos="Close" onClick={handleSideBar}/>
             </div>
             <History/>
             <div className="settings" onClick={handleSettingsClick}>

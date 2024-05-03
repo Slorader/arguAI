@@ -137,7 +137,6 @@ const Modal = ({handleModal, modalOptions}) => {
                 </div>)}
             </div>
         </div>
-
     )
 }
 

@@ -198,3 +198,34 @@
 .modal .modal-content .content-profile .input-line .input:last-child {
     margin-right: 0;
 }
+
+
+@media screen and (max-width: 633px) {
+
+    .modal .modal-content.medium,
+    .modal .modal-content.small {
+        width: 300px;
+        height: 190px;
+    }
+
+    .modal .modal-content.large {
+        width: 300px;
+        height: 400px;
+    }
+
+    .modal .modal-content .content-profile {
+        overflow: scroll;
+        padding: 0 50px;
+    }
+
+    .modal .modal-content .content-profile button {
+        margin-bottom: 15px;
+    }
+    .modal .modal-content .modal-header h2 {
+        font-size: 20px;
+    }
+
+    .modal .modal-content .modal-header button {
+        top: 8px;
+    }
+}

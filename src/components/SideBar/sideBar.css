@@ -6,7 +6,6 @@
     width: 240px;
     height: 100%;
     border-right: #342F2E 1px solid;
-    position: relative;
     transform : translateX(0);
     transition: transform 0.3s ease-out;
 }
@@ -19,10 +18,33 @@
 .sideBar .logo {
     padding: 15px;
     margin-bottom: 10px;
+    position: relative;
 }
 
 .sideBar .logo img {
     width: 120px;
+}
+
+.sideBar .logo .tool {
+    display: none;
+    position: absolute;
+    right: 10px;
+    top: 30px;
+}
+
+.sideBar .logo .tool button {
+    background: #171311;
+    color: #EA580C;
+    border: none;
+    cursor: pointer;
+}
+
+.sideBar .logo .tool button span {
+    font-weight: 200;
+}
+
+.sideBar .logo .tool .tool-info {
+    display: none
 }
 
 .settings {
@@ -137,4 +159,31 @@
     right: 0;
     transform: translateX(-50%);
     font-weight: 200;
+}
+
+@media screen and (max-width: 1344px) {
+    .sideBar {
+        position: absolute;
+        z-index: 2;
+        background: var(--background);
+    }
+
+    .sideBar .settings {
+        margin-bottom: 30px;
+    }
+
+    .sideBar .history {
+        height: 100%;
+    }
+
+    .sideBar .logo .tool {
+        display: flex!important;
+    }
+
+}
+
+@media screen and (max-width: 403px) {
+    .sideBar .settings {
+        bottom: 15px;
+    }
 }

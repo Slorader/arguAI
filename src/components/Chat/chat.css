@@ -38,6 +38,7 @@
     margin-left: 20px;
 }
 
+
 .chat .tools .tool {
     margin-right: 15px;
 }
@@ -70,6 +71,7 @@
     transform: translateX(-35%);
     margin-top: 10px;
     display: none;
+    z-index: 10;
 }
 
 .chat .tools .tool .tool-info span {
@@ -164,4 +166,82 @@
     display: flex;
     width: 100%;
     flex-direction: column;
+}
+
+@media screen and (max-width: 1344px) {
+    .chat-fullscreen {
+        transform: translateX(0) !important;
+    }
+}
+
+@media screen and (max-width: 438px) {
+
+    .chat .chat-container {
+        margin: 0 20px;
+    }
+
+    .chat .chat-container .home .inputs .input-content textarea {
+        width: 300px;
+    }
+
+    .chat .chat-container .home .logo img {
+        width: 150px;
+    }
+
+    .chat .chat-container .home .inputs p {
+        font-size: 10px;
+    }
+
+    .sideBar .history .time .text button {
+        display: flex;
+    }
+}
+
+@media screen and (max-width: 441px) {
+    .chat .chat-container .message-container {
+        padding: 0 80px;
+    }
+}
+
+@media screen and (max-width: 912px){
+    .chat .chat-container {
+        margin: 0 50px;
+    }
+
+    .chat .chat-container .home .inputs .input-content textarea {
+        width: 500px;
+    }
+
+    .chat .chat-container .home .logo img {
+        width: 200px;
+    }
+
+    .chat .chat-container .message-container {
+        padding: 0 40px;
+    }
+
+
+
+
+}
+
+@media screen and (max-width: 608px) {
+
+    .chat .chat-container {
+        margin: 0 50px;
+    }
+
+    .chat .chat-container .home .inputs .input-content textarea {
+        width: 400px;
+    }
+
+    .chat .chat-container .home .logo img {
+        width: 150px;
+    }
+}
+
+@media screen and (max-width: 452px) {
+    .chat .chat-container .home .inputs .input-content textarea {
+        width: 300px;
+    }
 }
