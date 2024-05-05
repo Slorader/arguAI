@@ -14,6 +14,7 @@ const Input = (props) => {
                 id={props.idInput}
                 autoComplete="off"
                 onBlur={handleInputBlur}
+                onChange={props.onChange}
             />
             <label htmlFor={props.idInput} className={hasValue ? 'active' : ''}>
                 {props.nameInput}

@@ -6,14 +6,7 @@ import Button from "../Button/Button.jsx";
 import "../Button/buttons.css"
 import axios from "axios";
 
-const getWelcomeMessage = async () => {
-    try {
-        const response = await axios.get("http://localhost:5000/api/data");
-        console.log(response.data);
-    } catch (error) {
-        console.error("Error fetching data:", error);
-    }
-};
+
 
 const Login = () => {
 
@@ -45,7 +38,7 @@ const Login = () => {
                     <div className="form">
                         <Input typeInput="email" nameInput="Email" idInput="login-email"></Input>
                         <Input typeInput="password" nameInput="Password" idInput="password-email"></Input>
-                        <Button type="sumbit" onclick={getWelcomeMessage} name="Log in"></Button>
+                        <Button type="sumbit" name="Log in"></Button>
                     </div>
                 </div>
             </div>

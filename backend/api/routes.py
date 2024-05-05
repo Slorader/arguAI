@@ -1,19 +1,16 @@
+from flask import request
 from flask import Flask, jsonify
 from flask_cors import CORS
-import firebase_admin
-from firebase_admin import credentials, firestore
+from firebase import db
+from users.users import users
+
 
 app = Flask(__name__)
 CORS(app)
 
-cred = credentials.Certificate("../firebase_credentials.json")
-firebase_admin.initialize_app(cred)
-db = firestore.client()
 
-@app.route('/api/data', methods=['GET'])
-def get_data():
-    data = {'message': 'Data retrieved successfully'}
-    return jsonify(data)
+app.register_blueprint(users, url_prefix='/api/users')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
