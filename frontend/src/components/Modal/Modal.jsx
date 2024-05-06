@@ -3,7 +3,19 @@ import Input from "../Input/Input.jsx";
 import '../Input/input.css'
 import Button from "../Button/Button.jsx";
 import '../Button/buttons.css'
-const Modal = ({handleModal, modalOptions}) => {
+import {auth, db} from "../Firebase/firebase.jsx"
+import { toast } from "react-toastify"
+import {getDoc, doc} from "firebase/firestore"
+import {useEffect, useState} from "react";
+const Modal = ({handleModal, modalOptions, userDetails}) => {
+
+    const [fname, setFname] = useState('');
+    const [lname, setLname] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassord] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmNewPassword, setConfirmNewPassword] = useState('');
+
 
 
     return (
@@ -124,15 +136,15 @@ const Modal = ({handleModal, modalOptions}) => {
                         </button>
                     </div>
                 </div>)}
-                {modalOptions.title === "Account settings" && (<div className="content-profile">
+                {modalOptions.title === "Account settings"  && userDetails && (<div className="content-profile">
                     <div className="input-line">
-                        <Input nameInput="Name" idInput="name" typeInput="text"></Input>
-                        <Input nameInput="Last name" idInput="last_name" typeInput="text"></Input>
+                        <Input nameInput="Name" value={userDetails.firstName} onChange={(e => setFname(e.target.value))} idInput="name" typeInput="text"></Input>
+                        <Input nameInput="Last name" value={userDetails.lastName} onChange={(e => setLname(e.target.value))} idInput="last_name" typeInput="text"></Input>
                     </div>
-                    <Input nameInput="Email" idInput="email" typeInput="email"></Input>
-                    <Input nameInput="Current password" idInput="currentPassword" typeInput="password"></Input>
-                    <Input nameInput="New password" idInput="newPassword" typeInput="password"></Input>
-                    <Input nameInput="Confirm new password" idInput="confirmPassword" typeInput="password"></Input>
+                    <Input nameInput="Email" idInput="email" value={userDetails.email} onChange={(e => setEmail(e.target.value))} typeInput="email"></Input>
+                    <Input nameInput="Current password" idInput="currentPassword" value={userDetails.password} onChange={(e => setPassord(e.target.value))} typeInput="password"></Input>
+                    <Input nameInput="New password" idInput="newPassword" onChange={(e => setNewPassword(e.target.value))} typeInput="password"></Input>
+                    <Input nameInput="Confirm new password" idInput="confirmPassword" onChange={(e => setConfirmNewPassword(e.target.value))} typeInput="password"></Input>
                     <Button name="Modify" idInput="modify"></Button>
                 </div>)}
             </div>

@@ -26,7 +26,7 @@
     transition: all .3s;
 }
 
-.input input:focus + label {
+.input input:focus + label{
     transform: translateY(-25px);
     background: #171311;
     z-index: 3;
@@ -34,6 +34,10 @@
     padding: 2px;
     color: #EA580C;
     transition: all .3s ease
+}
+
+input:not(:placeholder-shown) + label {
+    transform: translateY(-25px);
 }
 
 .input input:valid + label {
@@ -67,6 +71,8 @@
     font-size: 13px;
     padding: 2px;
 }
+
+
 
 
 

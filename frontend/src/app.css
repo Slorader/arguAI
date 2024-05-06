@@ -23,6 +23,40 @@ body {
     display: flex;
 }
 
+.loading {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading img {
+    width: 100px;
+    animation: loading 1s infinite;
+}
+
+.Toastify__toast-theme--light {
+    background: var(--background)!important;
+    border:  1px solid var(--border)!important;
+}
+
+.Toastify__close-button > svg {
+    fill: white!important;
+}
+
+
+@keyframes loading {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.5);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
 
 
 

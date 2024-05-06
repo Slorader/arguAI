@@ -4,13 +4,33 @@ import Input from "../Input/Input.jsx";
 import "../Input/input.css"
 import Button from "../Button/Button.jsx";
 import "../Button/buttons.css"
-import axios from "axios";
-
+import {useState} from "react";
+import { signInWithEmailAndPassword } from "firebase/auth"
+import { auth } from "../Firebase/firebase.jsx"
+import {toast} from "react-toastify";
 
 
 const Login = () => {
 
+    const [email, setEmail] = useState('');
+    const [password, setPassord] = useState('');
 
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            window.location.href = "/";
+            toast.success("User logged successfully !", {
+                position : "top-right",
+            });
+        } catch (error) {
+            console.log(error.message);
+            toast.error(error.message, {
+                position : "top-right",
+            });
+        }
+    }
 
     return(
         <div className="login">
@@ -35,11 +55,11 @@ const Login = () => {
                         <span>You do not have an account ? Register </span>
                         <a href="/register">here</a>
                     </div>
-                    <div className="form">
-                        <Input typeInput="email" nameInput="Email" idInput="login-email"></Input>
-                        <Input typeInput="password" nameInput="Password" idInput="password-email"></Input>
+                    <form onSubmit={handleSubmit} className="form">
+                        <Input typeInput="email" nameInput="Email" onChange = {(e) => setEmail(e.target.value)} idInput="login-email" placeholder=""></Input>
+                        <Input typeInput="password" nameInput="Password" onChange = {(e) => setPassord(e.target.value)} idInput="password-email" placeholder=""></Input>
                         <Button type="sumbit" name="Log in"></Button>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>

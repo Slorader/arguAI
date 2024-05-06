@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import axios from "axios";
 import Input from "../Input/Input.jsx";
 import Button from "../Button/Button.jsx";
@@ -6,25 +6,45 @@ import Logo from '../../../public/images/AR_white.png';
 import '../Login/login.css';
 import "../Input/input.css";
 import "../Button/buttons.css";
+import {createUserWithEmailAndPassword} from "firebase/auth"
+import {auth, db} from "../Firebase/firebase.jsx"
+import {setDoc, doc} from "firebase/firestore"
+import {toast} from "react-toastify";
 
 const Register = () => {
-    const [name, setName] = useState('');
-    const [lastName, setLastName] = useState('');
+
+    const [fname, setFname] = useState('');
+    const [lname, setLname] = useState('');
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [password, setPassord] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
 
+    const handleRegister = async (e) => {
+        e.preventDefault();
         try {
-            const formData = { name, lastName, email, password, confirmPassword };
-            const response = await axios.post("http://localhost:5000/api/users/register", formData);
-            console.log(formData);
-            console.log(response.data);
-        } catch (error) {
-            console.error("Error registering user:", error);
+            await createUserWithEmailAndPassword(auth,email,password);
+            const user = auth.currentUser;
+            console.log(user);
+            if (user) {
+                await setDoc(doc(db,"Users", user.uid),{
+                    email : user.email,
+                    firstName : fname,
+                    lastName : lname,
+                });
+            }
+            toast.success("User registered successfully !", {
+                position : "top-right",
+
+            });
+        } catch(error) {
+            console.log(error.message);
+            toast.success(error.message, {
+                position : "top-right",
+
+            });
         }
+
     };
 
     return (
@@ -38,7 +58,7 @@ const Register = () => {
                         <span>Start on Argu </span>
                         <span className="colored">AI</span>
                     </div>
-                    <p>"Lorem" is typically the beginning of a placeholder text known as "Lorem  Ipsum." This text is used in the publishing and typesetting industry to  demonstrate the visual appearance of a document or website without  relying on meaningful content. Lorem Ipsum has been the industry's  standard dummy text ever since the 1500s.</p>
+                    <p>"Lorem" is typically the beginning of a placeholder text known as "Lorem Ipsum." This text is used in the publishing and typesetting industry to  demonstrate the visual appearance of a document or website without  relying on meaningful content. Lorem Ipsum has been the industry's  standard dummy text ever since the 1500s.</p>
                 </div>
                 <div className="login-form">
                     <div className="title">
@@ -49,16 +69,17 @@ const Register = () => {
                         <span>Already have an account? Log in </span>
                         <a href="/login">here</a>
                     </div>
-                    <form className="form" onSubmit={handleSubmit}>
-                        <div className="input-line">
-                            <Input nameInput="Name" idInput="name" typeInput="text" value={name} onChange={(e) => setName(e.target.value)} />
-                            <Input nameInput="Last name" idInput="lastName" typeInput="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
-                        </div>
-                        <Input typeInput="email" nameInput="Email" idInput="registerEmail" value={email} onChange={(e) => setEmail(e.target.value)} />
-                        <Input typeInput="password" nameInput="Password" idInput="passwordEmail" value={password} onChange={(e) => setPassword(e.target.value)} />
-                        <Input typeInput="password" nameInput="Confirm password" idInput="confirmPasswordEmail" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-                        <Button type="submit" name="Register" />
-                    </form>
+
+                        <form onSubmit={handleRegister} className="form">
+                            <div className="input-line">
+                                <Input name="name" typeInput="text" onChange = {(e) => setFname(e.target.value)} nameInput="Name" idInput="name" placeholder="" />
+                                <Input name="lastName" typeInput="text" onChange = {(e) => setLname(e.target.value)}  nameInput="Last name" idInput="lastName" placeholder="" />
+                            </div>
+                            <Input name="email" typeInput="email" onChange = {(e) => setEmail(e.target.value)} nameInput="Email" idInput="registerEmail" placeholder="" />
+                            <Input name="password" typeInput="password" onChange = {(e) => setPassord(e.target.value)} nameInput="Password" idInput="passwordEmail" placeholder="" />
+                            <Input name="confirmPassword" typeInput="password" onChange = {(e) => setConfirmPassword(e.target.value)} nameInput="Confirm password" idInput="confirmPasswordEmail" placeholder="" />
+                            <Button type="submit" name="Register" />
+                        </form>
                 </div>
             </div>
         </div>
