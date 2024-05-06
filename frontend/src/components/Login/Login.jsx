@@ -1,5 +1,6 @@
 import "../Login/login.css"
 import Logo from '../../../public/images/AR_white.png'
+import Google from '../../../public/images/google.png'
 import Input from "../Input/Input.jsx";
 import "../Input/input.css"
 import Button from "../Button/Button.jsx";
@@ -8,12 +9,25 @@ import {useState} from "react";
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { auth } from "../Firebase/firebase.jsx"
 import {toast} from "react-toastify";
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
 
 const Login = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassord] = useState('');
+
+    const handleGoogleLogin = async () => {
+        const provider = new GoogleAuthProvider();
+        try {
+            await signInWithPopup(auth, provider);
+            window.location.href = "/";
+            toast.success("User logged in successfully!", { position: "top-right" });
+        } catch (error) {
+            console.error(error.message);
+            toast.error(error.message, { position: "top-right" });
+        }
+    };
 
 
     const handleSubmit = async (e) => {
@@ -55,9 +69,19 @@ const Login = () => {
                         <span>You do not have an account ? Register </span>
                         <a href="/register">here</a>
                     </div>
+                    <div className="google">
+                        <img src={Google} alt="google"/>
+                        <span>Continue with Google</span>
+                    </div>
+                    <div className="separator">
+                        <div className="line"></div>
+                        <span>Or</span>
+                    </div>
                     <form onSubmit={handleSubmit} className="form">
-                        <Input typeInput="email" nameInput="Email" onChange = {(e) => setEmail(e.target.value)} idInput="login-email" placeholder=""></Input>
-                        <Input typeInput="password" nameInput="Password" onChange = {(e) => setPassord(e.target.value)} idInput="password-email" placeholder=""></Input>
+                        <Input typeInput="email" nameInput="Email" onChange={(e) => setEmail(e.target.value)}
+                               idInput="login-email" placeholder=""></Input>
+                        <Input typeInput="password" nameInput="Password" onChange={(e) => setPassord(e.target.value)}
+                               idInput="password-email" placeholder=""></Input>
                         <Button type="sumbit" name="Log in"></Button>
                     </form>
                 </div>

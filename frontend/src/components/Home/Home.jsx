@@ -48,7 +48,13 @@ const Home = () => {
 
     return (
         <>
-
+            <SideBar
+                className={sidebarClass}
+                handleModal={handleModal}
+                setModalOptions={setModalOptions}
+                handleSideBar={handleSideBar}
+                userDetails={userDetails}
+            />
             <Chat
                 handleSideBar={handleSideBar}
                 isSideBarOpen={isSideBarOpen}
@@ -58,13 +64,7 @@ const Home = () => {
                 userDetails={userDetails}
             />
             {isModalOpen && <Modal handleModal={handleModal} modalOptions={modalOptions} userDetails={userDetails} />}
-            <SideBar
-                className={sidebarClass}
-                handleModal={handleModal}
-                setModalOptions={setModalOptions}
-                handleSideBar={handleSideBar}
-                userDetails={userDetails}
-            />
+
         </>
     );
 };

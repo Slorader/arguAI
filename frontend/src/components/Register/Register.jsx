@@ -10,6 +10,7 @@ import {createUserWithEmailAndPassword} from "firebase/auth"
 import {auth, db} from "../Firebase/firebase.jsx"
 import {setDoc, doc} from "firebase/firestore"
 import {toast} from "react-toastify";
+import Google from "../../../public/images/google.png";
 
 const Register = () => {
 
@@ -69,17 +70,31 @@ const Register = () => {
                         <span>Already have an account? Log in </span>
                         <a href="/login">here</a>
                     </div>
+                    <div className="google">
+                        <img src={Google} alt="google"/>
+                        <span>Continue with Google</span>
+                    </div>
+                    <div className="separator">
+                        <div className="line"></div>
+                        <span>Or</span>
+                    </div>
 
-                        <form onSubmit={handleRegister} className="form">
-                            <div className="input-line">
-                                <Input name="name" typeInput="text" onChange = {(e) => setFname(e.target.value)} nameInput="Name" idInput="name" placeholder="" />
-                                <Input name="lastName" typeInput="text" onChange = {(e) => setLname(e.target.value)}  nameInput="Last name" idInput="lastName" placeholder="" />
-                            </div>
-                            <Input name="email" typeInput="email" onChange = {(e) => setEmail(e.target.value)} nameInput="Email" idInput="registerEmail" placeholder="" />
-                            <Input name="password" typeInput="password" onChange = {(e) => setPassord(e.target.value)} nameInput="Password" idInput="passwordEmail" placeholder="" />
-                            <Input name="confirmPassword" typeInput="password" onChange = {(e) => setConfirmPassword(e.target.value)} nameInput="Confirm password" idInput="confirmPasswordEmail" placeholder="" />
-                            <Button type="submit" name="Register" />
-                        </form>
+                    <form onSubmit={handleRegister} className="form">
+                        <div className="input-line">
+                            <Input name="name" typeInput="text" onChange={(e) => setFname(e.target.value)}
+                                   nameInput="Name" idInput="name" placeholder=""/>
+                            <Input name="lastName" typeInput="text" onChange={(e) => setLname(e.target.value)}
+                                   nameInput="Last name" idInput="lastName" placeholder=""/>
+                        </div>
+                        <Input name="email" typeInput="email" onChange={(e) => setEmail(e.target.value)}
+                               nameInput="Email" idInput="registerEmail" placeholder=""/>
+                        <Input name="password" typeInput="password" onChange={(e) => setPassord(e.target.value)}
+                               nameInput="Password" idInput="passwordEmail" placeholder=""/>
+                        <Input name="confirmPassword" typeInput="password"
+                               onChange={(e) => setConfirmPassword(e.target.value)} nameInput="Confirm password"
+                               idInput="confirmPasswordEmail" placeholder=""/>
+                        <Button type="submit" name="Register"/>
+                    </form>
                 </div>
             </div>
         </div>

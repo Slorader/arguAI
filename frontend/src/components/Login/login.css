@@ -9,7 +9,7 @@
     display: flex;
     width: 100%;
     padding: 10px;
-    margin-bottom: 50px;
+    margin-bottom: 10px;
 }
 
 .login .login-logo img {
@@ -57,6 +57,53 @@
     border: var(--border) 1px solid;
     border-radius: 20px;
     width: 40%;
+}
+
+.login .login-container .login-form .google {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    cursor: pointer;
+    transition: ease 0.3s;
+}
+
+.login .login-container .login-form .google:hover {
+    background: #342f2e;
+    transition: ease 0.3s;
+}
+
+.login .login-container .login-form .separator {
+    position: relative;
+    margin-bottom: 30px;
+    margin-top: 30px;
+}
+
+.login .login-container .login-form .separator .line {
+    height: 1px;
+    background: var(--border);
+}
+
+.login .login-container .login-form .separator span {
+    color: #92908F;
+    position: absolute;
+    left: 50%;
+    top:-8px;
+    transform: translateX(-50%);
+    background: #171311;
+    padding: 2px;
+}
+
+.login .login-container .login-form .google img {
+    width: 40px;
+}
+
+.login .login-container .login-form .google span {
+    font-weight: 300;
+    font-size: 15px;
+    width: 100%;
+    text-align: center;
 }
 
 .login .login-container .login-form .register {
