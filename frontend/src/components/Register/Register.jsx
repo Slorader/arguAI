@@ -6,9 +6,9 @@ import Logo from '../../../public/images/AR_white.png';
 import '../Login/login.css';
 import "../Input/input.css";
 import "../Button/buttons.css";
-import {createUserWithEmailAndPassword} from "firebase/auth"
+import {createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup} from "firebase/auth"
 import {auth, db} from "../Firebase/firebase.jsx"
-import {setDoc, doc} from "firebase/firestore"
+import {setDoc, doc, getDoc} from "firebase/firestore"
 import {toast} from "react-toastify";
 import Google from "../../../public/images/google.png";
 
@@ -32,6 +32,7 @@ const Register = () => {
                     email : user.email,
                     firstName : fname,
                     lastName : lname,
+                    uid : user.uid,
                 });
             }
             toast.success("User registered successfully !", {
@@ -47,6 +48,49 @@ const Register = () => {
         }
 
     };
+
+    const saveUserToFirestore = async (user) => {
+        const { uid, displayName, email } = user;
+        const [firstName, lastName] = displayName.split(' ');
+
+        const userDocRef = doc(db, "Users", uid);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists()) {
+            console.log("User already exists in Firestore.");
+            return;
+        }
+
+        try {
+            await setDoc(userDocRef, {
+                uid,
+                email,
+                firstName,
+                lastName,
+            });
+            console.log("New user saved to Firestore successfully.");
+        } catch (error) {
+            console.error("Error saving new user to Firestore:", error);
+        }
+    };
+
+    const handleGoogleSignIn = async () => {
+        const provider = new GoogleAuthProvider();
+        try {
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+            await saveUserToFirestore(user);
+            toast.success("Logged in with Google successfully !", {
+                position : "top-right",
+            });
+        } catch(error) {
+            console.log(error.message);
+            toast.error(error.message, {
+                position : "top-right",
+            });
+        }
+    };
+
 
     return (
         <div className="login">
@@ -70,7 +114,7 @@ const Register = () => {
                         <span>Already have an account? Log in </span>
                         <a href="/login">here</a>
                     </div>
-                    <div className="google">
+                    <div onClick={handleGoogleSignIn} className="google">
                         <img src={Google} alt="google"/>
                         <span>Continue with Google</span>
                     </div>

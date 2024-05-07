@@ -7,9 +7,10 @@ import Button from "../Button/Button.jsx";
 import "../Button/buttons.css"
 import {useState} from "react";
 import { signInWithEmailAndPassword } from "firebase/auth"
-import { auth } from "../Firebase/firebase.jsx"
+import {auth, db} from "../Firebase/firebase.jsx"
 import {toast} from "react-toastify";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import {doc, getDoc, setDoc} from "firebase/firestore";
 
 
 const Login = () => {
@@ -20,7 +21,21 @@ const Login = () => {
     const handleGoogleLogin = async () => {
         const provider = new GoogleAuthProvider();
         try {
-            await signInWithPopup(auth, provider);
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+
+            const userDocRef = doc(db, "Users", user.uid);
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (!userDocSnap.exists()) {
+                await setDoc(userDocRef, {
+                    uid: user.uid,
+                    firstName: user.displayName.split(' ')[0],
+                    lastName: user.displayName.split(' ')[1],
+                    email: user.email,
+                });
+            }
+
             window.location.href = "/";
             toast.success("User logged in successfully!", { position: "top-right" });
         } catch (error) {
@@ -69,7 +84,7 @@ const Login = () => {
                         <span>You do not have an account ? Register </span>
                         <a href="/register">here</a>
                     </div>
-                    <div className="google">
+                    <div onClick={handleGoogleLogin} className="google">
                         <img src={Google} alt="google"/>
                         <span>Continue with Google</span>
                     </div>
