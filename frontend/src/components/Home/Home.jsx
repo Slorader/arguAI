@@ -23,7 +23,6 @@ const Home = () => {
                 if (docSnap.exists()) {
                     const userData = docSnap.data();
                     setUserDetails(userData);
-                    console.log(userDetails);
                 } else {
                     console.log("User data does not exist.");
                 }

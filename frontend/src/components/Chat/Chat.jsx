@@ -5,8 +5,11 @@ import './Message/message.css'
 
 import {useRef, useState, useEffect} from "react";
 import Message from "./Message/Message.jsx";
+import { auth } from "../Firebase/firebase.jsx";
 
 const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOptions}) => {
+
+
     const handleArrowButton = () => {
         if (isSideBarOpen) {
             return <Tool name="arrow_back_ios" infos="Close" onClick={handleSideBar} />;
@@ -18,6 +21,17 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
     const [val, setVal] = useState("");
     const [isChat, setIsChat] = useState(false);
     const [isHome, setIsHome] = useState(true);
+    const [currentDateTime, setCurrentDateTime] = useState(new Date());
+
+    useEffect(() => {
+        // Mettre à jour la date et l'heure toutes les secondes
+        const interval = setInterval(() => {
+            setCurrentDateTime(new Date());
+        }, 1000);
+
+        // Nettoyer l'intervalle lors du démontage du composant
+        return () => clearInterval(interval);
+    }, []);
 
 
     const handleChange = (e) => {
@@ -35,11 +49,39 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
         handleModal();
     };
 
+    const sendMessageToServer = async () => {
+        const data = {
+            text : val,
+            user_uid : auth.currentUser.uid,
+            created : currentDateTime,
+            modified : currentDateTime
+        }
+        try {
+            const response = await fetch('http://localhost:5000/api/chats/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: data })
+            });
 
-    const handleSubmit = (e) => {
+            if (!response.ok) {
+                throw new Error('Failed to send message to server');
+            }
+
+            const final = await response.json();
+            console.log(final);
+        } catch (error) {
+            console.error('Error sending message:', error);
+        }
+    }
+
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setIsChat(true);
         setIsHome(false);
+        await sendMessageToServer(val);
     }
 
     const handleKeyDown = (e) => {

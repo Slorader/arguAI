@@ -23,29 +23,39 @@ const Register = () => {
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        try {
-            await createUserWithEmailAndPassword(auth,email,password);
-            const user = auth.currentUser;
-            console.log(user);
-            if (user) {
-                await setDoc(doc(db,"Users", user.uid),{
-                    email : user.email,
-                    firstName : fname,
-                    lastName : lname,
-                    uid : user.uid,
+        if (confirmPassword === password)
+        {
+            try {
+                await createUserWithEmailAndPassword(auth,email,password);
+                const user = auth.currentUser;
+                console.log(user);
+                if (user) {
+                    await setDoc(doc(db,"Users", user.uid),{
+                        email : user.email,
+                        firstName : fname,
+                        lastName : lname,
+                        uid : user.uid,
+                    });
+                }
+                toast.success("User registered successfully !", {
+                    position : "top-right",
+
+                });
+            } catch(error) {
+                console.log(error.message);
+                toast.error(error.message, {
+                    position : "top-right",
+
                 });
             }
-            toast.success("User registered successfully !", {
-                position : "top-right",
 
-            });
-        } catch(error) {
-            console.log(error.message);
-            toast.success(error.message, {
+        } else {
+            toast.error("Passwords do not match.", {
                 position : "top-right",
 
             });
         }
+
 
     };
 

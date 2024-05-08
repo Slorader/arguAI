@@ -12,7 +12,6 @@ import {getDoc, doc} from "firebase/firestore"
 const SideBar = ({className, handleModal, setModalOptions, handleSideBar, userDetails}) =>
 {
 
-    console.log(userDetails);
 
     async function handleLogout() {
         try {
