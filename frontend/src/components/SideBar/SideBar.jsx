@@ -1,7 +1,7 @@
 import Logo from '../../../public/images/AR_white.png'
 import History from './History/History.jsx'
-import Tool from "../Chat/Tool/Tool.jsx";
-import '../Chat/chat.css'
+import Tool from "../Home/NewChat/Tool/Tool.jsx";
+import '../Home/NewChat/newchat.css'
 import {useEffect, useState} from "react";
 import 'animate.css';
 import {auth, db} from "../Firebase/firebase.jsx"
@@ -9,8 +9,10 @@ import { toast } from "react-toastify"
 import {getDoc, doc} from "firebase/firestore"
 
 
-const SideBar = ({className, handleModal, setModalOptions, handleSideBar, userDetails}) =>
+const SideBar = ({className, handleModal, setModalOptions, handleSideBar, user}) =>
 {
+
+    console.log(user);
 
 
     async function handleLogout() {
@@ -44,21 +46,21 @@ const SideBar = ({className, handleModal, setModalOptions, handleSideBar, userDe
                 <Tool name="arrow_back_ios" infos="Close" onClick={handleSideBar} />
             </div>
             <History />
-            {userDetails && (<div className="settings" onClick={handleSettingsClick}>
+            {user && (<div className="settings" onClick={handleSettingsClick}>
                 <div className="user-icon">
                         <span>
-                            {userDetails.firstName.substring(0, 1).toUpperCase()}{userDetails.lastName.substring(0, 1).toUpperCase()}
+                            {user.firstName.substring(0, 1).toUpperCase()}{user.lastName.substring(0, 1).toUpperCase()}
                         </span>
                 </div>
-                <p>{userDetails.firstName} {userDetails.lastName}</p>
+                <p>{user.firstName} {user.lastName}</p>
                 <span className="material-symbols-rounded">
                         expand_all
                     </span>
             </div>)}
             {isModalOpen && (<div className="modal-settings animate__animated animate__fadeIn">
                 <div className="user-infos">
-                    <span>{userDetails.firstName}</span>
-                    <p>{userDetails.email}</p>
+                    <span>{user.firstName}</span>
+                    <p>{user.email}</p>
                 </div>
                 <div className="settings-line" onClick={handleDeletedButton}>
                     <a>Chats deleted</a>

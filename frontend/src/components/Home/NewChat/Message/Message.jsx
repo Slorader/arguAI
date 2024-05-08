@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import BotLogo from "../../../../public/images/AR_notext_white.png";
+import BotLogo from "../../../../../public/images/AR_notext_white.png";
 
 const Message = ({ type, value }) => {
     const [text, setText] = useState("");

@@ -5,18 +5,20 @@ import Input from "../Input/Input.jsx";
 import "../Input/input.css"
 import Button from "../Button/Button.jsx";
 import "../Button/buttons.css"
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import { signInWithEmailAndPassword } from "firebase/auth"
 import {auth, db} from "../Firebase/firebase.jsx"
 import {toast} from "react-toastify";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import {doc, getDoc, setDoc} from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 
 const Login = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassord] = useState('');
+    const navigate = useNavigate();
 
     const handleGoogleLogin = async () => {
         const provider = new GoogleAuthProvider();
@@ -36,7 +38,7 @@ const Login = () => {
                 });
             }
 
-            window.location.href = "/";
+            window.location.href = "/chat";
             toast.success("User logged in successfully!", { position: "top-right" });
         } catch (error) {
             console.error(error.message);
@@ -49,7 +51,7 @@ const Login = () => {
         e.preventDefault();
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            window.location.href = "/";
+            navigate("/chat");
             toast.success("User logged successfully !", {
                 position : "top-right",
             });

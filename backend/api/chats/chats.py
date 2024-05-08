@@ -16,6 +16,8 @@ def add():
             'modified': chats_data['message']['modified']
         })
 
-        return jsonify({'message': 'Chat registered successfully', 'chat': chats_data}), 201
+        doc_id = doc_ref[1].id  # Utilisez doc_ref.id pour obtenir l'ID du document
+
+        return jsonify({'message': 'NewChat registered successfully', 'docRef_id': doc_id}), 201
     except Exception as e:
         return jsonify({'message': str(e)}), 500

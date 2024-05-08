@@ -1,13 +1,14 @@
 import Tool from "./Tool/Tool.jsx";
-import Logo from '../../../public/images/AR_notext_white.png'
+import Logo from '../../../../public/images/AR_notext_white.png'
 import message from "./Message/Message.jsx";
 import './Message/message.css'
 
 import {useRef, useState, useEffect} from "react";
 import Message from "./Message/Message.jsx";
-import { auth } from "../Firebase/firebase.jsx";
+import { auth } from "../../Firebase/firebase.jsx";
+import {Navigate, useNavigate} from 'react-router-dom';
 
-const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOptions}) => {
+const NewChat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOptions}) => {
 
 
     const handleArrowButton = () => {
@@ -22,14 +23,13 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
     const [isChat, setIsChat] = useState(false);
     const [isHome, setIsHome] = useState(true);
     const [currentDateTime, setCurrentDateTime] = useState(new Date());
+    const navigate = useNavigate();
 
     useEffect(() => {
-        // Mettre à jour la date et l'heure toutes les secondes
         const interval = setInterval(() => {
             setCurrentDateTime(new Date());
         }, 1000);
 
-        // Nettoyer l'intervalle lors du démontage du composant
         return () => clearInterval(interval);
     }, []);
 
@@ -70,7 +70,10 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
             }
 
             const final = await response.json();
-            console.log(final);
+            const chat_uid = final.docRef_id;
+            navigate(`/chat/${chat_uid}`);
+            console.log(chat_uid);
+
         } catch (error) {
             console.error('Error sending message:', error);
         }
@@ -82,6 +85,7 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
         setIsChat(true);
         setIsHome(false);
         await sendMessageToServer(val);
+
     }
 
     const handleKeyDown = (e) => {
@@ -102,11 +106,8 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
                 <Tool name="download" infos="Download" onClick={handleExportButton} />
             </div>
             <div className="chat-container">
-                {isChat && (<div className="message-container">
-                    <Message type="user" value={val}/>
-                    <Message type="bot"/>
-                </div>)}
-                {isHome && (<div className="home">
+
+                <div className="home">
                     <div className="logo">
                         <img src={Logo} alt="logo"/>
                     </div>
@@ -128,11 +129,11 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
                         </form>
                         <p>This is a beta version. Results may be inaccurate.</p>
                     </div>
-                </div>)}
+                </div>
             </div>
         </div>
     );
 };
 
 
-export default Chat
+export default NewChat
