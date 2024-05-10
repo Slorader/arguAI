@@ -1,0 +1,24 @@
+
+
+.btn button {
+    width: 100%;
+    background: #EA580C;
+    color: white;
+    border-radius: 30px;
+    border: none;
+    height: 50px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 600;
+    transition: transform 0.3s ease;
+}
+
+button {
+    transition: transform 0.3s ease;
+}
+
+button:active {
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+
+}

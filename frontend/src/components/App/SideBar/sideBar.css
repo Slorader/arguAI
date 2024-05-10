@@ -1,0 +1,190 @@
+
+
+.sideBar {
+    display: flex;
+    flex-direction: column;
+    min-width: 240px;
+    max-width: 240px;
+    height: 100%;
+    border-right: #342F2E 1px solid;
+    transform : translateX(0);
+    transition: transform 0.3s ease-out;
+}
+
+.sideBar-closed {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-out;
+}
+
+.sideBar .logo {
+    padding: 15px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.sideBar .logo img {
+    width: 120px;
+}
+
+.sideBar .logo .tool {
+    display: none;
+    position: absolute;
+    right: 10px;
+    top: 30px;
+}
+
+.sideBar .logo .tool button {
+    background: #171311;
+    color: #EA580C;
+    border: none;
+    cursor: pointer;
+}
+
+.sideBar .logo .tool button span {
+    font-weight: 200;
+}
+
+.sideBar .logo .tool .tool-info {
+    display: none
+}
+
+.settings {
+    display: flex;
+    align-items: center;
+    height: 50px;
+    margin: 20px 15px 0 15px;
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+    transition: all ease 0.3s;
+}
+
+.settings .user-icon {
+    background: #342F2E;
+    width: 32px;
+    height: 32px;
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 500;
+    margin-right: 10px;
+    margin-left: 10px;
+    font-size: 12px;
+}
+
+.settings p {
+    font-size: 15px;
+}
+
+.settings .user-icon span {
+    margin-top: 3px;
+}
+.sideBar .settings:hover{
+    background: #342f2e;
+    transition: all ease 0.3s;
+}
+
+.sideBar .settings .material-symbols-rounded {
+    position: absolute;
+    right: 10px;
+    font-size: 15px;
+}
+
+.sideBar .modal-settings {
+    display: flex;
+    flex-direction: column;
+    width: 208px;
+    position: absolute;
+    left: 50%;
+    bottom: 90px;
+    border-radius: 10px;
+    border: #342F2E 1px solid;
+    z-index: 3;
+    margin-left: -104px;
+    background: #171311;
+}
+
+.sideBar .modal-settings.animate__animated {
+    animation-duration: 500ms;
+}
+
+.sideBar .modal-settings .user-infos {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    border-radius: 10px;
+    padding: 0 10px;
+    margin-bottom: 15px;
+    margin-top: 10px;
+}
+
+.sideBar .modal-settings .user-infos p {
+    font-weight: 200;
+}
+
+.sideBar .modal-settings .user-infos p {
+    color: #92908F;
+    font-size: 12px;
+    font-weight: 200;
+}
+
+.sideBar .modal-settings .settings-line {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 0 10px;
+    transition: ease all 0.3s;
+    cursor: pointer;
+    height: 40px;
+}
+
+.sideBar .modal-settings .settings-line:hover {
+    transition: ease all 0.3s;
+    background: #342f2e;
+}
+
+.sideBar .modal-settings .settings-line a {
+    font-weight: 300;
+    font-size: 15px;
+    text-decoration: none;
+}
+
+.sideBar .modal-settings .settings-line:last-child {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.sideBar .modal-settings .settings-line span {
+    position: absolute;
+    right: 0;
+    transform: translateX(-50%);
+    font-weight: 200;
+}
+
+@media screen and (max-width: 1344px) {
+    .sideBar {
+        position: absolute;
+        z-index: 2;
+        background: var(--background);
+    }
+
+    .sideBar .settings {
+        margin-bottom: 30px;
+    }
+
+    .sideBar .history {
+        height: 100%;
+    }
+
+    .sideBar .logo .tool {
+        display: flex!important;
+    }
+
+}
+
+@media screen and (max-width: 403px) {
+    .sideBar .settings {
+        bottom: 15px;
+    }
+}
