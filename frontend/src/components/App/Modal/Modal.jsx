@@ -148,11 +148,10 @@ const Modal = ({handleModal, modalOptions, userDetails}) => {
                            onChange={(e => setNewPassword(e.target.value))} typeInput="password"></Input>
                     <Input nameInput="Confirm new password" idInput="confirmPassword"
                            onChange={(e => setConfirmNewPassword(e.target.value))} typeInput="password"></Input>
-
                 </div>)}
-                <div className="modal-btn">
+                {modalOptions.title === "Account settings" && (<div className="modal-btn">
                     <Button name="Modify" idInput="modify"></Button>
-                </div>
+                </div>)}
             </div>
         </div>
     )

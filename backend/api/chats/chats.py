@@ -40,13 +40,18 @@ def get_chat(chat_id):
 @chats.route('/', methods=['GET'])
 def get_all_chats():
     try:
+        auth = request.headers.get('Authorization')
+        print(auth)
         all_chats = []
         chats_collection = db.collection('Chats').get()
 
         for chat in chats_collection:
             chat_data = chat.to_dict()
-            chat_data['id'] = chat.id
-            all_chats.append(chat_data)
+            chat_user_uid = chat_data.get('user_uid')
+            if chat_user_uid == auth:
+                chat_data['id'] = chat.id
+                all_chats.append(chat_data)
+
 
         return jsonify({'message': 'All chats retrieved successfully', 'chats': all_chats}), 200
     except Exception as e:

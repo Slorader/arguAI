@@ -64,12 +64,14 @@ const History = ({ allChats }) => {
         <div className="history">
             <div className="time">
                 <p>Today</p>
-                    <div className="text new-text" >
-                        <a ref={paragraphRef} href="">{text}</a>
+                {todayChats.map(chat => (
+                    <div className="text" key={chat.id}>
+                        <a href={`/chat/${chat.id}`}>{chat.text}</a>
                         <button>
                             <span className="material-symbols-rounded">delete</span>
                         </button>
                     </div>
+                ))}
             </div>
 
             <div className="time">

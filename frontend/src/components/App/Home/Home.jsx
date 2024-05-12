@@ -8,8 +8,7 @@ import {auth, db} from "../Firebase/firebase.jsx";
 import {doc, getDoc} from "firebase/firestore";
 
 const Home = ({handleSideBar, isSideBarOpen, handleModal, chatClass, setModalOptions, user, notifyNewChat}) => {
-    const setUserDetails = useState(null);
-
+    const [userDetails, setUserDetails] = useState(null);
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {

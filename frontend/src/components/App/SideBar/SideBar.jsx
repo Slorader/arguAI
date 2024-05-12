@@ -18,13 +18,18 @@ const SideBar = ({className, handleModal, setModalOptions, handleSideBar, user, 
     useEffect(() => {
         const fetchChatData = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:5000/api/chats/`);
+
+                const token = auth.currentUser.uid;
+                const response = await axios.get(`http://127.0.0.1:5000/api/chats/`, {
+                    headers : {
+                        Authorization : token
+                    }
+                });
                 setAllChats(response.data.chats);
             } catch (error) {
                 console.error("Erreur lors de la récupération des données du chat:", error);
             }
         };
-        console.log(1);
 
         fetchChatData();
     }, [notifyNewChat]);

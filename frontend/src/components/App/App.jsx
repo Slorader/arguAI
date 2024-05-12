@@ -23,7 +23,6 @@ function App() {
 
     const notifyNewChat = () => {
         setNewChatNotification(!newChatNotification);
-        console.log(newChatNotification);
     };
 
 
