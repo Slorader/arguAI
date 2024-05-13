@@ -14,6 +14,7 @@ def add():
             'user_uid': chats_data['message']['user_uid'],
             'created': chats_data['message']['created'],
             'modified': chats_data['message']['modified'],
+            'animation': chats_data['message']['animation'],
         })
 
         doc_id = doc_ref[1].id

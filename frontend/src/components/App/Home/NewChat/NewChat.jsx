@@ -7,6 +7,12 @@ import {useNavigate} from 'react-router-dom';
 const NewChat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOptions, notifyNewChat}) => {
 
 
+
+    const textAreaRef = useRef(null)
+    const [val, setVal] = useState("");
+    const [currentDateTime, setCurrentDateTime] = useState(new Date());
+    const navigate = useNavigate();
+
     const handleArrowButton = () => {
         if (isSideBarOpen) {
             return <Tool name="arrow_back_ios" infos="Close" onClick={handleSideBar} />;
@@ -14,10 +20,6 @@ const NewChat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModa
         return <Tool name="arrow_forward_ios" infos="Open" onClick={handleSideBar} />;
     };
 
-    const textAreaRef = useRef(null)
-    const [val, setVal] = useState("");
-    const [currentDateTime, setCurrentDateTime] = useState(new Date());
-    const navigate = useNavigate();
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -52,6 +54,7 @@ const NewChat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModa
             user_uid : auth.currentUser.uid,
             created : currentDateTime,
             modified : currentDateTime,
+            animation : true,
         }
 
         try {
