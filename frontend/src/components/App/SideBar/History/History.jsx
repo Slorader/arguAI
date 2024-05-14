@@ -1,13 +1,14 @@
 import './history.css';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from "react";
+import login from "../../Auth/Login/Login.jsx";
+import {auth} from "../../Firebase/firebase.jsx";
+import axios from "axios";
 
 const History = ({ allChats }) => {
     const [todayChats, setTodayChats] = useState([]);
     const [yesterdayChats, setYesterdayChats] = useState([]);
     const [last7DaysChats, setLast7DaysChats] = useState([]);
-    const [newChat, setNewChat] = useState(null);
-    const [allChatsLast, setAllChatsLast] = useState([]);
 
     const today = new Date();
     const yesterday = new Date(today);
@@ -26,47 +27,42 @@ const History = ({ allChats }) => {
                 const yesterdayString = yesterday.toDateString();
 
                 if (chatDateString === todayString) {
-                    todayChatsTemp.push(chat);
+                    if (!chat.bin) {
+                        todayChatsTemp.push(chat);
+                    }
                 } else if (chatDateString === yesterdayString) {
-                    yesterdayChatsTemp.push(chat);
+                    if (!chat.bin) {
+                        yesterdayChatsTemp.push(chat);
+                    }
                 } else {
-                    last7DaysChatsTemp.push(chat);
+                    if (!chat.bin) {
+                        last7DaysChatsTemp.push(chat);
+                    }
                 }
             });
-
-            setAllChatsLast(allChats);
-            const tempNewChat = allChats.find(chat => !allChatsLast.some(oldChat => oldChat.id === chat.id));
-            setNewChat(tempNewChat);
-            console.log(newChat);
 
             setTodayChats(todayChatsTemp);
             setYesterdayChats(yesterdayChatsTemp);
             setLast7DaysChats(last7DaysChatsTemp);
-        }
+        };
         fillHistory();
-    }, [allChats, allChatsLast]);
+    }, [allChats]);
 
-    useEffect(() => {
-        if (newChat) {
-            animateText(newChat.text);
+
+    const addToBin = async (chat) => {
+        try {
+            const response = await axios.post(`http://localhost:5000/api/chats/set_bin_attribute/${chat.id}`, null, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            setTodayChats(todayChats.filter(c => c.id !== chat.id));
+            setYesterdayChats(yesterdayChats.filter(c => c.id !== chat.id));
+            setLast7DaysChats(last7DaysChats.filter(c => c.id !== chat.id));
+            console.log(response.data);
+        } catch (error) {
+            console.error('Error:', error);
         }
-    }, [newChat]);
-
-    const animateText = (text) => {
-        const link = document.querySelector('.new-chat a');
-        if (!link) return;
-        const fullText = text;
-        let index = 0;
-
-        link.textContent = '';
-
-        const intervalId = setInterval(() => {
-            link.textContent += fullText[index];
-            index++;
-            if (index >= fullText.length) {
-                clearInterval(intervalId);
-            }
-        }, 30);
     };
 
     return (
@@ -74,42 +70,48 @@ const History = ({ allChats }) => {
             {todayChats.length > 0 && (
                 <div className="time">
                     <p>Today</p>
-                    {todayChats.sort((a, b) => new Date(b.created) - new Date(a.created)).map(chat => (
-                        <div className={`text ${chat.id === newChat?.id ? 'new-chat' : ''}`} key={chat.id}>
-                            <a href={`/chat/${chat.id}`}>{chat.text}</a>
-                            <button>
-                                <span className="material-symbols-rounded">delete</span>
-                            </button>
-                        </div>
-                    ))}
+                    {todayChats
+                        .sort((a, b) => new Date(b.created) - new Date(a.created))
+                        .map(chat => (
+                            <div className={'text'} key={chat.id}>
+                                <a href={`/chat/${chat.id}`}>{chat.text}</a>
+                                <button onClick={() => addToBin(chat)}>
+                                    <span className="material-symbols-rounded">delete</span>
+                                </button>
+                            </div>
+                        ))}
                 </div>
             )}
 
             {yesterdayChats.length > 0 && (
                 <div className="time">
                     <p>Yesterday</p>
-                    {yesterdayChats.sort((a, b) => new Date(b.created) - new Date(a.created)).map(chat => (
-                        <div className="text" key={chat.id}>
-                            <a href={`/chat/${chat.id}`}>{chat.text}</a>
-                            <button>
-                                <span className="material-symbols-rounded">delete</span>
-                            </button>
-                        </div>
-                    ))}
+                    {yesterdayChats
+                        .sort((a, b) => new Date(b.created) - new Date(a.created))
+                        .map(chat => (
+                            <div className={'text'} key={chat.id}>
+                                <a href={`/chat/${chat.id}`}>{chat.text}</a>
+                                <button onClick={() => addToBin(chat)}>
+                                    <span className="material-symbols-rounded">delete</span>
+                                </button>
+                            </div>
+                        ))}
                 </div>
             )}
 
             {last7DaysChats.length > 0 && (
                 <div className="time">
                     <p>Last 7 days</p>
-                    {last7DaysChats.sort((a, b) => new Date(b.created) - new Date(a.created)).map(chat => (
-                        <div className="text" key={chat.id}>
-                            <a href={`/chat/${chat.id}`}>{chat.text}</a>
-                            <button>
-                                <span className="material-symbols-rounded">delete</span>
-                            </button>
-                        </div>
-                    ))}
+                    {last7DaysChats
+                        .sort((a, b) => new Date(b.created) - new Date(a.created))
+                        .map(chat => (
+                            <div className={'text'} key={chat.id}>
+                                <a href={`/chat/${chat.id}`}>{chat.text}</a>
+                                <button onClick={() => addToBin(chat)}>
+                                    <span className="material-symbols-rounded">delete</span>
+                                </button>
+                            </div>
+                        ))}
                 </div>
             )}
         </div>

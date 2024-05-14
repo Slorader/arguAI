@@ -14,5 +14,6 @@ app.register_blueprint(users, url_prefix='/api/users')
 app.register_blueprint(chats, url_prefix='/api/chats')
 
 
+
 if __name__ == '__main__':
     app.run(debug=True)

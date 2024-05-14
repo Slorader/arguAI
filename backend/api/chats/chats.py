@@ -3,6 +3,7 @@ from firebase import db
 
 chats = Blueprint('chats', __name__)
 
+
 @chats.route('/add', methods=['POST'])
 def add():
     chats_data = request.json
@@ -14,7 +15,7 @@ def add():
             'user_uid': chats_data['message']['user_uid'],
             'created': chats_data['message']['created'],
             'modified': chats_data['message']['modified'],
-            'animation': chats_data['message']['animation'],
+            'bin': chats_data['message']['bin'],
         })
 
         doc_id = doc_ref[1].id
@@ -38,6 +39,7 @@ def get_chat(chat_id):
     except Exception as e:
         return jsonify({'message': str(e)}), 500
 
+
 @chats.route('/', methods=['GET'])
 def get_all_chats():
     try:
@@ -53,7 +55,50 @@ def get_all_chats():
                 chat_data['id'] = chat.id
                 all_chats.append(chat_data)
 
-
         return jsonify({'message': 'All chats retrieved successfully', 'chats': all_chats}), 200
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+
+
+@chats.route('/delete/<chat_id>', methods=['DELETE'])
+def delete_chat(chat_id):
+    try:
+        db.collection('Chats').document(chat_id).delete()
+
+        return jsonify({'message': 'Chat deleted successfully'}), 200
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+
+
+@chats.route('/set_bin_attribute/<chat_id>', methods=['POST'])
+def set_bin_attribute(chat_id):
+    try:
+        chat_ref = db.collection('Chats').document(chat_id)
+        chat_data = chat_ref.get().to_dict()
+
+        new_bin_value = not chat_data['bin']
+
+        chat_ref.update({
+            'bin': new_bin_value
+        })
+
+        return jsonify({"message": f"Attribute 'bin' set to {new_bin_value} successfully for chat {chat_id}"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@chats.route('/bins/<user_id>', methods=['GET'])
+def get_user_bin_chats(user_id):
+    try:
+        bin_chats = []
+
+        chats_collection = db.collection('Chats').where('user_uid', '==', user_id).where('bin', '==', True).get()
+
+        for chat in chats_collection:
+            chat_data = chat.to_dict()
+            chat_data['id'] = chat.id
+            bin_chats.append(chat_data)
+
+        return jsonify({'message': 'User bin chats retrieved successfully', 'bin_chats': bin_chats}), 200
     except Exception as e:
         return jsonify({'message': str(e)}), 500

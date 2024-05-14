@@ -119,7 +119,7 @@ function App() {
                 />} />
             </Routes>
             <ToastContainer />
-            {isModalOpen && <Modal handleModal={handleModal} modalOptions={modalOptions} userDetails={user} />}
+            {isModalOpen && <Modal handleModal={handleModal} notifyNewChat={notifyNewChat} modalOptions={modalOptions} userDetails={user} />}
         </BrowserRouter>
     );
 }

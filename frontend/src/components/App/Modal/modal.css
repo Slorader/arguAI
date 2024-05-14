@@ -141,6 +141,7 @@
     text-overflow: ellipsis;
     font-size: 13px;
     margin-right: 5px;
+    min-width: 85%;
 }
 
 .modal .modal-content .content-deleted .option-deleted a:hover {

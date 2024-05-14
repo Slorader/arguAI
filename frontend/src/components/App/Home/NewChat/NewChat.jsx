@@ -54,7 +54,7 @@ const NewChat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModa
             user_uid : auth.currentUser.uid,
             created : currentDateTime,
             modified : currentDateTime,
-            animation : true,
+            bin : false,
         }
 
         try {

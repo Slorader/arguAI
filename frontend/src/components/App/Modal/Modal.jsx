@@ -3,8 +3,11 @@ import Input from "../Form/Input/Input.jsx";
 import '../Form/Input/input.css'
 import Button from "../Form/Button/Button.jsx";
 import '../Form/Button/buttons.css'
-import {useState} from "react";
-const Modal = ({handleModal, modalOptions, userDetails}) => {
+import {useEffect, useState} from "react";
+import {auth, db} from "../Firebase/firebase.jsx";
+import axios from "axios";
+
+const Modal = ({handleModal, modalOptions, userDetails, notifyNewChat}) => {
 
     const setFname = useState('');
     const setLname = useState('');
@@ -12,7 +15,51 @@ const Modal = ({handleModal, modalOptions, userDetails}) => {
     const setPassord = useState('');
     const setNewPassword = useState('');
     const setConfirmNewPassword = useState('');
+    const [binChats, setBinChats] = useState([]);
 
+
+    useEffect(() => {
+        const fetchBinChats = async () => {
+            const userId = auth.currentUser.uid;
+            if (userId)
+            {
+                try {
+
+                    const response = await axios.get(`http://127.0.0.1:5000/api/chats/bins/${userId}`);
+                    setBinChats(response.data.bin_chats);
+                } catch (error) {
+                    console.error("Erreur lors de la récupération des chats de la bin:", error);
+                }
+            }
+
+        };
+
+        fetchBinChats();
+    }, []);
+
+
+    const deleteChats = async (chat_uid) => {
+        try {
+            const response = await axios.delete(`http://127.0.0.1:5000/api/chats/delete/${chat_uid}`);
+            setBinChats(binChats.filter(c => c.id !== chat_uid));
+        } catch (error) {
+            console.error("Erreur lors de la suppression du chat:", error);
+        }
+    };
+
+    const restoreChats = async (chat_uid) => {
+        try {
+            const response = await axios.post(`http://localhost:5000/api/chats/set_bin_attribute/${chat_uid}`, null, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            setBinChats(binChats.filter(c => c.id !== chat_uid));
+            notifyNewChat();
+        } catch (error) {
+            console.error("Erreur lors de la suppression du chat:", error);
+        }
+    };
 
 
     return (
@@ -41,98 +88,25 @@ const Modal = ({handleModal, modalOptions, userDetails}) => {
                         </span>
                     </div>
                 </div>)}
-                {modalOptions.title === 'Chats deleted' && (<div className="content-deleted">
-                    <div className="option-deleted">
-                        <a href="">The RGU School of Computing is a great place to study. The staff are friendly, the
-                            labs
-                            are state-of-the-art, and the subjects are engaging. So, you will have an amazing time
-                            during
-                            your degree.
-                        </a>
-                        <button>
-                            <span className="material-symbols-rounded">
-                                restore_from_trash
-                            </span>
-                        </button>
-                        <button>
-                            <span className="material-symbols-rounded">
-                                delete
-                            </span>
-                        </button>
+                {modalOptions.title === 'Chats deleted' && (
+                    <div className="content-deleted">
+                        {binChats.map(chat => (
+                            <div className="option-deleted" key={chat.id}>
+                                <a href={`/chat/${chat.id}`}>{chat.text}</a>
+                                <button onClick={() => {restoreChats(chat.id)}}>
+                                    <span className="material-symbols-rounded">
+                                        restore_from_trash
+                                    </span>
+                                </button>
+                                <button onClick={() => {deleteChats(chat.id)}}>
+                                    <span className="material-symbols-rounded">
+                                        delete
+                                    </span>
+                                </button>
+                            </div>
+                        ))}
                     </div>
-                    <div className="option-deleted">
-                        <a href="">The RGU School of Computing is a great place to study. The staff are friendly, the
-                            labs
-                            are state-of-the-art, and the subjects are engaging. So, you will have an amazing time
-                            during
-                            your degree.
-                        </a>
-                        <button>
-                            <span className="material-symbols-rounded">
-                                restore_from_trash
-                            </span>
-                        </button>
-                        <button>
-                            <span className="material-symbols-rounded">
-                                delete
-                            </span>
-                        </button>
-                    </div>
-                    <div className="option-deleted">
-                        <a href="">The RGU School of Computing is a great place to study. The staff are friendly, the
-                            labs
-                            are state-of-the-art, and the subjects are engaging. So, you will have an amazing time
-                            during
-                            your degree.
-                        </a>
-                        <button>
-                            <span className="material-symbols-rounded">
-                                restore_from_trash
-                            </span>
-                        </button>
-                        <button>
-                            <span className="material-symbols-rounded">
-                                delete
-                            </span>
-                        </button>
-                    </div>
-                    <div className="option-deleted">
-                        <a href="">The RGU School of Computing is a great place to study. The staff are friendly, the
-                            labs
-                            are state-of-the-art, and the subjects are engaging. So, you will have an amazing time
-                            during
-                            your degree.
-                        </a>
-                        <button>
-                            <span className="material-symbols-rounded">
-                                restore_from_trash
-                            </span>
-                        </button>
-                        <button>
-                            <span className="material-symbols-rounded">
-                                delete
-                            </span>
-                        </button>
-                    </div>
-                    <div className="option-deleted">
-                        <a href="">The RGU School of Computing is a great place to study. The staff are friendly, the
-                            labs
-                            are state-of-the-art, and the subjects are engaging. So, you will have an amazing time
-                            during
-                            your degree.
-                        </a>
-                        <button>
-                            <span className="material-symbols-rounded">
-                                restore_from_trash
-                            </span>
-                        </button>
-                        <button>
-                            <span className="material-symbols-rounded">
-                                delete
-                            </span>
-                        </button>
-                    </div>
-                </div>)}
+                )}
                 {modalOptions.title === "Account settings" && userDetails && (<div className="content-profile">
                     <div className="input-line">
                         <Input nameInput="Name" value={userDetails.firstName} onChange={(e => setFname(e.target.value))}

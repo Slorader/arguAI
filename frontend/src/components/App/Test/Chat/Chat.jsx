@@ -19,7 +19,6 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
         const fetchChatData = async () => {
             try {
                 const response = await axios.get(`http://127.0.0.1:5000/api/chats/${chatId}`);
-                console.log(response.data.chat);
                 setChat(response.data.chat.text);
             } catch (error) {
                 console.error("Erreur lors de la récupération des données du chat:", error);
