@@ -2,13 +2,14 @@ import openai
 import json
 import os
 from tqdm import tqdm
+from backend.dataset.key import get_api_key
 
-openai.api_key = "sk-proj-ZuVYgNf8OLb3Cd0fZMowT3BlbkFJNtkVQRRbzOf4ULxsWKt0"
+openai.api_key = get_api_key()
 
 folder_path = './sadface-argsme'
 
-if os.path.exists('./response.json'):
-    with open('./response.json', 'r') as f:
+if os.path.exists('../train/data/dataset.json'):
+    with open('../train/data/dataset.json', 'r') as f:
         responses = json.load(f)
 else:
     responses = []
@@ -17,9 +18,9 @@ contentCrashed = 0
 
 iteration_counter = 0
 
-total_iterations = 100
+total_iterations = 2
 
-start_index = 730
+start_index = 2003
 
 systemeContent = """
 You are an intelligent assistant who helps to classify elements in structured debates. Your task is to receive a JSON object containing "nodes" and "edges", classify each node as "premise", "sub-conclusion", "conclusion", etc., and classify the relationships between nodes as "conflict" or "support". You must return only the node IDs and their types, as well as the types of relationships between nodes specified in "edges". Return only the following information in JSON format:
@@ -92,9 +93,7 @@ def process_file(file_path, index):
     return json_content
 
 
-
 def compter_json(file_name):
-    nombre_json = 0
 
     with open(file_name, 'r') as file:
         data = json.load(file)
@@ -114,16 +113,16 @@ for index, filename in tqdm(enumerate(os.listdir(folder_path)), desc="Processing
             print(iteration_counter)
 
         if iteration_counter % 100 == 0 or iteration_counter == total_iterations:
-            with open('./response.json', 'w') as f:
+            with open('../train/data/dataset.json', 'w') as f:
                 json.dump(responses, f, indent=4)
 
         if iteration_counter >= total_iterations:
             break
 
-with open('./response.json', 'w') as f:
+with open('../train/data/dataset.json', 'w') as f:
     json.dump(responses, f, indent=4)
 
 print(f"Processing completed with {contentCrashed} crashes.")
-folder_name = "response.json"
+folder_name = '../train/data/dataset.json'
 total_json_account = compter_json(folder_name)
 print("Number of data in the dataset", total_json_account)
