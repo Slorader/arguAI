@@ -36,7 +36,7 @@
 
 .modal .modal-content.large {
     width: 500px;
-    height: 500px;
+    height: 450px;
 }
 
 .modal .modal-content.animate__animated {
@@ -189,6 +189,17 @@
     padding: 0 80px;
 }
 
+.modal .modal-content .content-profile .google img {
+    width: 40px;
+}
+
+.modal .modal-content .content-profile .google .google-text {
+    width: 100%;
+    text-align: center;
+    font-weight: 300;
+    font-size: 15px;
+}
+
 .modal .modal-content .modal-btn {
     width: 100%;
     padding: 10px 80px;
@@ -205,6 +216,15 @@
 
 .modal .modal-content .content-profile .input-line .input:last-child {
     margin-right: 0;
+}
+
+
+.modal .modal-content .content-profile .google {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
 }
 
 

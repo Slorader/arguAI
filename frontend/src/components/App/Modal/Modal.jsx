@@ -6,37 +6,66 @@ import '../Form/Button/buttons.css'
 import {useEffect, useState} from "react";
 import {auth, db} from "../Firebase/firebase.jsx";
 import axios from "axios";
+import GLogo from "../../../../public/images/google.png";
 
 const Modal = ({handleModal, modalOptions, userDetails, notifyNewChat}) => {
 
-    const setFname = useState('');
-    const setLname = useState('');
-    const setEmail = useState('');
-    const setPassord = useState('');
-    const setNewPassword = useState('');
-    const setConfirmNewPassword = useState('');
+    const [fname,setFname] = useState('');
+    const [lname,setLname] = useState('');
+    const [email,setEmail] = useState('');
     const [binChats, setBinChats] = useState([]);
+
+    const setUser = () => {
+        setFname(userDetails.firstName);
+        setLname(userDetails.lastName);
+        setEmail(userDetails.email);
+    }
+
+    const isValidEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
 
 
     useEffect(() => {
+        setUser();
         const fetchBinChats = async () => {
             const userId = auth.currentUser.uid;
             if (userId)
             {
                 try {
-
                     const response = await axios.get(`http://127.0.0.1:5000/api/chats/bins/${userId}`);
                     setBinChats(response.data.bin_chats);
                 } catch (error) {
                     console.error("Erreur lors de la récupération des chats de la bin:", error);
                 }
             }
-
         };
-
         fetchBinChats();
     }, []);
 
+    const modifyUser = async () => {
+        console.log(auth.currentUser);
+        const user = auth.currentUser;
+        const data = {
+            firstName: fname,
+            lastName: lname,
+            email: email,
+        };
+
+        if (user && isValidEmail(email)) {
+            try {
+                const userId = user.uid;
+                const response = await axios.post(`http://127.0.0.1:5000/api/users/modify/${userId}`, data);
+                console.log(response.data);
+
+            } catch (error) {
+                console.error("Erreur lors de la modification des données de l'utilisateur:", error);
+            }
+        } else {
+            console.log('email invalide');
+        }
+    };
 
     const deleteChats = async (chat_uid) => {
         try {
@@ -109,22 +138,27 @@ const Modal = ({handleModal, modalOptions, userDetails, notifyNewChat}) => {
                 )}
                 {modalOptions.title === "Account settings" && userDetails && (<div className="content-profile">
                     <div className="input-line">
-                        <Input nameInput="Name" value={userDetails.firstName} onChange={(e => setFname(e.target.value))}
+                        <Input nameInput="Name" value={fname} onChange={(e => setFname(e.target.value))}
                                idInput="name" typeInput="text"></Input>
-                        <Input nameInput="Last name" value={userDetails.lastName}
+                        <Input nameInput="Last name" value={lname}
                                onChange={(e => setLname(e.target.value))} idInput="last_name" typeInput="text"></Input>
                     </div>
-                    <Input nameInput="Email" idInput="email" value={userDetails.email}
-                           onChange={(e => setEmail(e.target.value))} typeInput="email"></Input>
-                    <Input nameInput="Current password" idInput="currentPassword" value={userDetails.password}
-                           onChange={(e => setPassord(e.target.value))} typeInput="password"></Input>
-                    <Input nameInput="New password" idInput="newPassword"
-                           onChange={(e => setNewPassword(e.target.value))} typeInput="password"></Input>
-                    <Input nameInput="Confirm new password" idInput="confirmPassword"
-                           onChange={(e => setConfirmNewPassword(e.target.value))} typeInput="password"></Input>
+                    <Input nameInput="Email" idInput="email" value={email}
+                           onChange={(e => setEmail(e.target.value))} typeInput="email">
+                    </Input>
+                    <div className="google">
+                        <img src={GLogo} alt="google"/>
+                        <span className="google-text">Connected with Google</span>
+                        {auth.currentUser.displayName && (<span className="material-symbols-rounded">
+                        check_circle
+                        </span>)}
+                        {!auth.currentUser.displayName && (<span className="material-symbols-rounded">
+                        cancel
+                        </span>)}
+                    </div>
                 </div>)}
                 {modalOptions.title === "Account settings" && (<div className="modal-btn">
-                    <Button name="Modify" idInput="modify"></Button>
+                    <Button name="Modify" onClick={modifyUser}></Button>
                 </div>)}
             </div>
         </div>
