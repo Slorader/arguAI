@@ -1,3 +1,5 @@
 .idea/
 backend/dataset/sadface-argsme/
 backend/dataset/key.py
+backend/train/models/random_forest_model.pkl
+backend/train/models/tfidf_vectorizer.pkl
