@@ -37,9 +37,29 @@ def predict_category(text):
     prediction = model.predict(X)
     return prediction[0]
 
-def segment_text(text):
-    doc = nlp(text)
-    segments = [sent.text for sent in doc.sents]
+
+def segment_text(doc):
+    segments = []
+    start = 0
+    include_next = False
+
+    continuation_keywords = ['so', 'therefore', 'thus', 'then', 'consequently', 'hence', 'accordingly', 'as a result', 'because', 'as such', 'henceforth', 'henceforward', 'subsequently']
+
+    for token in doc:
+        if token.text in ('.', '?', '!', ';') or token.is_space:
+            segments.append(doc[start:token.i + 1].text.strip())
+            start = token.i + 1
+            include_next = False
+        elif token.text in continuation_keywords:
+            segments.append(doc[start:token.i].text.strip())
+            start = token.i
+            include_next = True
+        elif token.text == ',' and include_next:
+            include_next = False
+
+    if start < len(doc):
+        segments.append(doc[start:].text.strip())
+
     return segments
 
 print("Entrez du texte à classifier (tapez 'exit' pour quitter) :")
@@ -48,7 +68,8 @@ while True:
     if user_input.lower() == 'exit':
         break
 
-    sentences = segment_text(user_input)
+    doc = nlp(user_input)
+    sentences = segment_text(doc)
     for sentence in sentences:
         predicted_label = predict_category(sentence)
         print(f"Phrase : {sentence}")
