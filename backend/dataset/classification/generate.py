@@ -8,8 +8,8 @@ openai.api_key = get_api_key()
 
 folder_path = './sadface-argsme'
 
-if os.path.exists('../train/data/dataset.json'):
-    with open('../train/data/dataset.json', 'r') as f:
+if os.path.exists('../train/data/classification-dataset.json'):
+    with open('../train/data/classification-dataset.json', 'r') as f:
         responses = json.load(f)
 else:
     responses = []
@@ -113,16 +113,16 @@ for index, filename in tqdm(enumerate(os.listdir(folder_path)), desc="Processing
             print(iteration_counter)
 
         if iteration_counter % 100 == 0 or iteration_counter == total_iterations:
-            with open('../train/data/dataset.json', 'w') as f:
+            with open('../train/data/classification-dataset.json', 'w') as f:
                 json.dump(responses, f, indent=4)
 
         if iteration_counter >= total_iterations:
             break
 
-with open('../train/data/dataset.json', 'w') as f:
+with open('../train/data/classification-dataset.json', 'w') as f:
     json.dump(responses, f, indent=4)
 
 print(f"Processing completed with {contentCrashed} crashes.")
-folder_name = '../train/data/dataset.json'
+folder_name = '../train/data/classification-dataset.json'
 total_json_account = compter_json(folder_name)
 print("Number of data in the dataset", total_json_account)

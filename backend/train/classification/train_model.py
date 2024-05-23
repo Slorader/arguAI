@@ -17,7 +17,7 @@ nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
 
-json_file_path = "data/dataset.json"
+json_file_path = "../data/classification-dataset.json"
 
 def load_data_from_json(file_path):
     with open(file_path, "r", encoding="utf-8") as file:
@@ -49,6 +49,8 @@ for graph_data in graph_data_list:
             all_labels.append(node['type'])
 
 print(f"Original class distribution: {Counter(all_labels)}")
+
+
 
 vectorizer = TfidfVectorizer()
 X = vectorizer.fit_transform(all_texts)
