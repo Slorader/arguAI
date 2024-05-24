@@ -3,3 +3,6 @@ backend/dataset/classification/sadface-argsme/
 backend/dataset/key.py
 backend/train/classification/models/random_forest_model.pkl
 backend/train/classification/models/tfidf_vectorizer.pkl
+backend/train/relations/logs
+backend/train/relations/models
+backend/train/relations/results
