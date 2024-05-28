@@ -1,12 +1,13 @@
 import spacy
-import json
 import nltk
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-from nltk.stem import WordNetLemmatizer
 import string
 import joblib
 import os
+import uuid
+import json
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
 
 nltk.download('punkt')
 nltk.download('stopwords')
@@ -37,7 +38,6 @@ def predict_category(text):
     prediction = model.predict(X)
     return prediction[0]
 
-
 def segment_text(doc):
     segments = []
     start = 0
@@ -62,7 +62,38 @@ def segment_text(doc):
 
     return segments
 
-print("Entrez du texte à classifier (tapez 'exit' pour quitter) :")
+def create_json_output(sentences, predictions):
+    nodes = []
+    edges = []
+
+    # Create nodes
+    for sentence, prediction in zip(sentences, predictions):
+        node_id = str(uuid.uuid4())
+        nodes.append({
+            "id": node_id,
+            "text": sentence,
+            "type": prediction
+        })
+
+    # Create edges
+    for i in range(len(sentences) - 1):
+        if 'so' in sentences[i + 1].lower():
+            text_source = sentences[i]
+            text_target = sentences[i + 1]
+            edges.append({
+                "text_source": text_source,
+                "text_target": text_target,
+                "type": "support"
+            })
+
+    output = {
+        "nodes": nodes,
+        "edges": edges
+    }
+
+    return json.dumps(output, indent=4)
+
+print("Entrez du texte à classifier (classsification) (tapez 'exit' pour quitter) :")
 while True:
     user_input = input("Texte : ")
     if user_input.lower() == 'exit':
@@ -70,9 +101,9 @@ while True:
 
     doc = nlp(user_input)
     sentences = segment_text(doc)
-    for sentence in sentences:
-        predicted_label = predict_category(sentence)
-        print(f"Phrase : {sentence}")
-        print(f"Prédiction : {predicted_label}\n")
+    predictions = [predict_category(sentence) for sentence in sentences]
+
+    output_json = create_json_output(sentences, predictions)
+    print(output_json)
 
 print("Fin de la classification.")

@@ -12,19 +12,16 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 
-# Télécharger les ressources NLTK nécessaires
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
 
-# Charger le modèle de classification et le vectorizer
 classification_model_path = os.path.join("../classification/models", "random_forest_model.pkl")
 vectorizer_path = os.path.join("../classification/models", "tfidf_vectorizer.pkl")
 
 classification_model = joblib.load(classification_model_path)
 vectorizer = joblib.load(vectorizer_path)
 
-# Charger le tokenizer et la configuration DistilBERT
 tokenizer_path = "models"
 model_weights_path = "models/model.safetensors"
 config_path = "models/config.json"
@@ -33,14 +30,11 @@ tokenizer = DistilBertTokenizer.from_pretrained(tokenizer_path)
 config = AutoConfig.from_pretrained(config_path)
 relation_model = DistilBertForSequenceClassification(config)
 
-# Charger les poids du modèle à partir du fichier safetensors
 state_dict = load_file(model_weights_path)
 relation_model.load_state_dict(state_dict)
 
-# Charger le modèle spaCy
 nlp = spacy.load("en_core_web_sm")
 
-# Fonction de prétraitement du texte
 def preprocess_text(text):
     text = text.lower()
     text = text.translate(str.maketrans('', '', string.punctuation))
@@ -52,14 +46,12 @@ def preprocess_text(text):
     preprocessed_text = ' '.join(lemmatized_tokens)
     return preprocessed_text
 
-# Prédiction de la catégorie du texte
 def predict_category(text):
     preprocessed_text = preprocess_text(text)
     X = vectorizer.transform([preprocessed_text])
     prediction = classification_model.predict(X)
     return prediction[0]
 
-# Segmenter le texte en phrases
 def segment_text(doc):
     segments = []
     start = 0
@@ -87,7 +79,6 @@ def segment_text(doc):
 
     return segments
 
-# Fonction de détection de relations utilisant DistilBERT
 def predict_relation(text1, text2):
     inputs = tokenizer(text1, text2, return_tensors="pt", truncation=True, padding=True, max_length=128)
     outputs = relation_model(**inputs)
@@ -95,12 +86,10 @@ def predict_relation(text1, text2):
     prediction = torch.argmax(logits, dim=1).item()
     return prediction == 1
 
-# Créer la sortie JSON
 def create_json_output(sentences, predictions):
     nodes = []
     edges = []
 
-    # Créer des nœuds
     for sentence, prediction in zip(sentences, predictions):
         node_id = str(uuid.uuid4())
         nodes.append({
@@ -109,7 +98,6 @@ def create_json_output(sentences, predictions):
             "type": prediction
         })
 
-    # Créer des arêtes en respectant les règles de structure argumentative
     for i in range(len(nodes)):
         for j in range(len(nodes)):
             if i != j:
@@ -131,8 +119,7 @@ def create_json_output(sentences, predictions):
     return json.dumps(output, indent=4)
 
 
-# Interface utilisateur pour la classification et la détection de relations
-print("Entrez du texte à classifier (tapez 'exit' pour quitter) :")
+print("Entrez du texte à classifier (relations) (tapez 'exit' pour quitter) :")
 while True:
     user_input = input("Texte : ")
     if user_input.lower() == 'exit':

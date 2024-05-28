@@ -1,32 +1,18 @@
 import json
-import nltk
+import torch
+from transformers import DistilBertTokenizer, DistilBertForSequenceClassification, Trainer, TrainingArguments
+from sklearn.model_selection import train_test_split
+from datasets import Dataset, load_metric
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 import string
-from collections import Counter
-from imblearn.over_sampling import SMOTE
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report
-from sklearn.model_selection import GridSearchCV
-import joblib
+import nltk
 
-# Télécharger les ressources NLTK nécessaires
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
 
-# Charger les données JSON
-json_file_path = "../data/classification-dataset.json"
-
-def load_data_from_json(file_path):
-    with open(file_path, "r", encoding="utf-8") as file:
-        data = json.load(file)
-    return data
-
-# Prétraiter le texte
 def preprocess_text(text):
     text = text.lower()
     text = text.translate(str.maketrans('', '', string.punctuation))
@@ -38,56 +24,84 @@ def preprocess_text(text):
     preprocessed_text = ' '.join(lemmatized_tokens)
     return preprocessed_text
 
-# Charger et préparer les données
-graph_data_list = load_data_from_json(json_file_path)
+with open('../data/classification-dataset.json', 'r') as f:
+    data_list = json.load(f)
 
-source_texts = []
-target_texts = []
+texts = []
 labels = []
 
-for graph_data in graph_data_list:
-    nodes = {node['id']: preprocess_text(node['text']) for node in graph_data.get("nodes", [])}
-    edges = graph_data.get("edges", [])
-    for edge in edges:
-        source_id = edge.get('source_id')
-        target_id = edge.get('target_id')
-        relation_type = edge.get('type')
+for data in data_list:
+    nodes = {node['id']: (preprocess_text(node['text']), node['type']) for node in data['nodes']}
+    for edge in data['edges']:
+        source_id = edge['source_id']
+        target_id = edge['target_id']
         if source_id in nodes and target_id in nodes:
-            source_texts.append(nodes[source_id])
-            target_texts.append(nodes[target_id])
-            labels.append(relation_type)
+            text1, type1 = nodes[source_id]
+            text2, type2 = nodes[target_id]
+            combined_text = f"{type1}: {text1} [SEP] {type2}: {text2}"
+            label = 1 if edge['type'] == 'support' else 0  # 1 pour support, 0 pour none
+            texts.append(combined_text)
+            labels.append(label)
+        else:
+            print(f"Warning: Edge references non-existent node. Source ID: {source_id}, Target ID: {target_id}")
 
-# Fusionner les textes source et cible pour la vectorisation
-combined_texts = [f"{source} {target}" for source, target in zip(source_texts, target_texts)]
+train_texts, test_texts, train_labels, test_labels = train_test_split(texts, labels, test_size=0.2, random_state=42)
 
-# Afficher la distribution des classes
-print(f"Original class distribution: {Counter(labels)}")
+model_name = "distilbert-base-uncased"
+tokenizer = DistilBertTokenizer.from_pretrained(model_name)
+model = DistilBertForSequenceClassification.from_pretrained(model_name, num_labels=2)
 
-# Vectorisation avec TF-IDF
-vectorizer = TfidfVectorizer(max_features=5000)
-X = vectorizer.fit_transform(combined_texts)
-y = labels
+def preprocess_function(texts):
+    return tokenizer(texts, truncation=True, padding=True, max_length=128)
 
-# Équilibrer les classes avec SMOTE si nécessaire
-smote = SMOTE(random_state=42)
-X_resampled, y_resampled = smote.fit_resample(X, y)
+train_encodings = preprocess_function(train_texts)
+test_encodings = preprocess_function(test_texts)
 
-# Séparer les données en ensembles d'entraînement et de test
-X_train, X_test, y_train, y_test = train_test_split(X_resampled, y_resampled, test_size=0.2, random_state=42)
+train_dataset = Dataset.from_dict({
+    'input_ids': train_encodings['input_ids'],
+    'attention_mask': train_encodings['attention_mask'],
+    'labels': train_labels
+})
+test_dataset = Dataset.from_dict({
+    'input_ids': test_encodings['input_ids'],
+    'attention_mask': test_encodings['attention_mask'],
+    'labels': test_labels
+})
 
-# Entraîner le modèle
-clf = RandomForestClassifier(n_estimators=100, random_state=42)
-clf.fit(X_train, y_train)
+metric = load_metric("accuracy")
 
-# Évaluer le modèle
-y_pred = clf.predict(X_test)
-print(classification_report(y_test, y_pred, target_names=list(set(labels))))
+def compute_metrics(eval_pred):
+    logits, labels = eval_pred
+    predictions = torch.argmax(torch.tensor(logits), dim=-1)  # Convertir logits en Tensor
+    return metric.compute(predictions=predictions, references=labels)
 
-# Sauvegarder le modèle et le vectorizer
-model_path = "./models/segment_relation_classifier.pkl"
-vectorizer_path = "./models/tfidf_vectorizer.pkl"
-joblib.dump(clf, model_path)
-joblib.dump(vectorizer, vectorizer_path)
+# Définir les arguments d'entraînement
+training_args = TrainingArguments(
+    output_dir='./results',
+    num_train_epochs=3,
+    per_device_train_batch_size=8,
+    per_device_eval_batch_size=8,
+    warmup_steps=500,
+    weight_decay=0.01,
+    logging_dir='./logs',
+    logging_steps=10,
+    evaluation_strategy="epoch"
+)
 
-print(f"Model saved to {model_path}")
-print(f"Vectorizer saved to {vectorizer_path}")
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=train_dataset,
+    eval_dataset=test_dataset,
+    compute_metrics=compute_metrics
+)
+
+trainer.train()
+
+eval_results = trainer.evaluate()
+
+print(f"Accuracy: {eval_results['eval_accuracy']}")
+
+# Sauvegarder le modèle entraîné
+model.save_pretrained("models/trained_relation_model")
+tokenizer.save_pretrained("models/trained_relation_model")
