@@ -58,6 +58,26 @@ const NewChat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModa
         }
 
         try {
+            const response = await fetch('http://localhost:5000/api/analyses/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({message: val})
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to send message to server');
+            }
+
+            const data = await response.json();
+            console.log('Response from server:', data);
+
+        } catch (error) {
+            console.error('Error sending message:', error);
+        }
+
+        try {
             const response = await fetch('http://localhost:5000/api/chats/add', {
                 method: 'POST',
                 headers: {
@@ -79,7 +99,6 @@ const NewChat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModa
             console.error('Error sending message:', error);
         }
     }
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
