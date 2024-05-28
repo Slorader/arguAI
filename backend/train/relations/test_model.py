@@ -35,6 +35,11 @@ relation_model.load_state_dict(state_dict)
 
 nlp = spacy.load("en_core_web_sm")
 
+conclusion_keywords = [
+    'so', 'therefore', 'thus', 'then', 'consequently', 'hence', 'accordingly',
+    'as a result', 'because', 'as such', 'henceforth', 'henceforward', 'subsequently'
+]
+
 def preprocess_text(text):
     text = text.lower()
     text = text.translate(str.maketrans('', '', string.punctuation))
@@ -50,7 +55,14 @@ def predict_category(text):
     preprocessed_text = preprocess_text(text)
     X = vectorizer.transform([preprocessed_text])
     prediction = classification_model.predict(X)
+
+    if prediction[0] != 'conclusion':
+        if any(text.lower().startswith(keyword + ' ') or text.lower().startswith(keyword + ',') for keyword in conclusion_keywords):
+            return 'conclusion'
+
+    print(text, prediction)
     return prediction[0]
+
 
 def segment_text(doc):
     segments = []
