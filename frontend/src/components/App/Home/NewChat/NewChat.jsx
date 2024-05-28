@@ -49,36 +49,32 @@ const NewChat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModa
     };
 
     const sendMessageToServer = async () => {
+        const currentDateTime = new Date().toISOString();
         const data = {
-            text : val,
-            user_uid : auth.currentUser.uid,
-            created : currentDateTime,
-            modified : currentDateTime,
-            bin : false,
-        }
+            text: val,
+            user_uid: auth.currentUser.uid,
+            created: currentDateTime,
+            modified: currentDateTime,
+            bin: false,
+        };
 
         try {
-            const response = await fetch('http://localhost:5000/api/analyses/', {
+            const analysisResponse = await fetch('http://localhost:5000/api/analyses/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({message: val})
+                body: JSON.stringify({ message: val })
             });
 
-            if (!response.ok) {
+            if (!analysisResponse.ok) {
                 throw new Error('Failed to send message to server');
             }
 
-            const data = await response.json();
-            console.log('Response from server:', data);
+            const analysisData = await analysisResponse.json();
+            console.log('Response from server:', analysisData);
 
-        } catch (error) {
-            console.error('Error sending message:', error);
-        }
-
-        try {
-            const response = await fetch('http://localhost:5000/api/chats/add', {
+            const chatResponse = await fetch('http://localhost:5000/api/chats/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -86,19 +82,34 @@ const NewChat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModa
                 body: JSON.stringify({ message: data })
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to send message to server');
+            if (!chatResponse.ok) {
+                throw new Error('Failed to save chat in database');
             }
 
-            const final = await response.json();
+            const chatResult = await chatResponse.json();
+            const chat_id = chatResult.docRef_id;
             notifyNewChat();
-            const chat_uid = final.docRef_id;
-            navigate(`/chat/${chat_uid}`);
 
+            const analysisSaveResponse = await fetch(`http://localhost:5000/api/analyses/add/${chat_id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(analysisData)
+            });
+
+            if (!analysisSaveResponse.ok) {
+                throw new Error('Failed to save analysis in database');
+            }
+
+            console.log('Analysis saved successfully');
+            navigate(`/chat/${chat_id}`);
         } catch (error) {
-            console.error('Error sending message:', error);
+            console.error('Error:', error);
         }
-    }
+
+    };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();

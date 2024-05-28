@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from firebase import db
 import spacy
 import nltk
 import string
@@ -142,3 +143,31 @@ def get_analyses():
 
     output_json = create_json_output(sentences, predictions)
     return jsonify(json.loads(output_json))
+
+@analyses.route('/add/<chat_id>', methods=['POST'])
+def add_analysis(chat_id):
+    data = request.json
+    print("données")
+    print(data)
+    analysis_ref = db.collection('Analyses').document()
+    analysis_ref.set({'chat_id': chat_id})
+
+    nodes = data.get('nodes', [])
+    edges = data.get('edges', [])
+
+    for node in nodes:
+        db.collection('Nodes').add({
+            'analyse_id': analysis_ref.id,
+            'text': node['text'],
+            'type': node['type']
+        })
+
+    for edge in edges:
+        db.collection('Edges').add({
+            'analyse_id': analysis_ref.id,
+            'text_source_id': edge['text_source'],
+            'text_target_id': edge['text_target'],
+            'type': edge['type']
+        })
+
+    return jsonify({"status": "success", "analysis_id": analysis_ref.id})
