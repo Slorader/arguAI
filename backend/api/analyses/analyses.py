@@ -67,7 +67,7 @@ def segment_text(doc):
     include_next = False
 
     continuation_keywords = [
-        'so', 'therefore', 'thus', 'then', 'consequently', 'hence', 'accordingly',
+        'so', 'therefore', 'thus', 'then', 'consequently', 'hence', 'accordingly', 'in conclusion',
         'as a result', 'because', 'as such', 'henceforth', 'henceforward', 'subsequently'
     ]
 

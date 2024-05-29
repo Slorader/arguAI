@@ -19,17 +19,27 @@ const Message = ({ type, value, chatId }) => {
 
     useEffect(() => {
         if (type === "bot" && chatId) {
-            setTimeout(() => {
-                loading.current.style.display = "none";
-                paragraphRef.current.style.display = "block";
-                getAnalyse();
-            }, 3000);
+            const animationPlayed = localStorage.getItem(`animationPlayed_${chatId}`);
+            if (animationPlayed) {
+                getAnalyse(false);
+            } else {
+                setTimeout(() => {
+                    loading.current.style.display = "none";
+                    paragraphRef.current.style.display = "block";
+                    getAnalyse(true);
+                }, 3000);
+            }
         }
     }, [type, chatId]);
 
     useEffect(() => {
         if (analyse) {
-            animateText();
+            const animationPlayed = localStorage.getItem(`animationPlayed_${chatId}`);
+            if (!animationPlayed) {
+                animateText();
+            } else {
+                setText(formatFullText(analyse));
+            }
         }
     }, [analyse]);
 
@@ -41,6 +51,8 @@ const Message = ({ type, value, chatId }) => {
                 setAnalyse(response.data);
                 if (!shouldAnimate) {
                     setText(formatFullText(response.data));
+                    loading.current.style.display = "none";
+                    paragraphRef.current.style.display = "block";
                 }
             } catch (error) {
                 console.error("Erreur lors de la récupération des données de l'analyse:", error);
