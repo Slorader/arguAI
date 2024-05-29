@@ -18,22 +18,14 @@ const Message = ({ type, value, chatId }) => {
     const [analyse, setAnalyse] = useState(null);
 
     useEffect(() => {
-        if (type === "bot") {
-            if (!localStorage.getItem('animationPlayed')) {
-                setTimeout(() => {
-                    loading.current.style.display = "none";
-                    paragraphRef.current.style.display = "block";
-                    getAnalyse();
-                }, 3000);
-                localStorage.setItem('animationPlayed', 'true');
-            } else {
-                // If animation has already played, directly display the text
+        if (type === "bot" && chatId) {
+            setTimeout(() => {
                 loading.current.style.display = "none";
                 paragraphRef.current.style.display = "block";
                 getAnalyse();
-            }
+            }, 3000);
         }
-    }, [type]);
+    }, [type, chatId]);
 
     useEffect(() => {
         if (analyse) {
@@ -41,26 +33,32 @@ const Message = ({ type, value, chatId }) => {
         }
     }, [analyse]);
 
-    const getAnalyse = async () => {
+    const getAnalyse = async (shouldAnimate = true) => {
         if (chatId) {
             try {
                 const response = await axios.get(`http://127.0.0.1:5000/api/analyses/get/${chatId}`);
                 console.log(response.data);
                 setAnalyse(response.data);
+                if (!shouldAnimate) {
+                    setText(formatFullText(response.data));
+                }
             } catch (error) {
                 console.error("Erreur lors de la récupération des données de l'analyse:", error);
             }
         }
     };
 
-    const animateText = () => {
+    const formatFullText = (analyse) => {
         let fullText = "Here is your argument analysis:\n\n";
-
-        analyse.nodes.forEach((node, index) => {
+        analyse.nodes.forEach((node) => {
             fullText += `${node.text}\n`;
             fullText += `Type: ${node.type}\n\n`;
         });
+        return fullText;
+    };
 
+    const animateText = () => {
+        let fullText = formatFullText(analyse);
         let index = 0;
 
         const intervalId = setInterval(() => {
@@ -68,6 +66,7 @@ const Message = ({ type, value, chatId }) => {
             index++;
             if (index > fullText.length) {
                 clearInterval(intervalId);
+                localStorage.setItem(`animationPlayed_${chatId}`, 'true');
             }
         }, 10);
     };

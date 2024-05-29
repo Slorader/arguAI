@@ -13,6 +13,7 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
     const { chatId } = useParams();
     const [chat, setChat] = useState(null);
     const navigate = useNavigate();
+    const [viewSchema, setViewSchema] = useState(false);
 
     useEffect(() => {
         const fetchChatData = async () => {
@@ -26,6 +27,10 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
 
         fetchChatData();
     }, [chatId]);
+
+    const handleViews = () => {
+        setViewSchema(!viewSchema);
+    }
 
     const handleArrowButton = () => {
         if (isSideBarOpen) {
@@ -50,13 +55,25 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
                 {handleArrowButton()}
                 <Tool name="add_circle" infos="New chat" onClick={redirect}  />
                 <Tool name="download" infos="Download" onClick={handleExportButton} />
+                <div onClick={handleViews} className="mode-choice">
+                    <span className={`material-symbols-rounded ${!viewSchema ? 'left-select' : ''}`}>
+                        sms
+                    </span>
+                    <span className={`material-symbols-rounded ${viewSchema ? 'right-select' : ''}`}>
+                        timeline
+                    </span>
+
+                </div>
             </div>
-            <div className="chat-container">
+            {!viewSchema && (<div className="chat-container">
                 <div className="message-container">
                     <Message type="user" value={chat}/>
                     <Message type="bot" chatId={chatId}/>
                 </div>
-            </div>
+            </div>)}
+            {viewSchema && (<div className="schema-container">
+
+            </div>)}
         </div>
     );
 };

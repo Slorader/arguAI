@@ -96,6 +96,42 @@
     font-weight: 200;
 }
 
+.chat .mode-choice {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    width: 100px;
+    height: 40px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    position: absolute;
+    right: 20px;
+    cursor: pointer;
+}
+
+.chat .mode-choice span {
+    width: 50%;
+    font-weight: 200;
+    text-align: center;
+    display: flex;
+    height: 40px;
+    justify-content: center;
+    align-items: center;
+}
+
+.chat .mode-choice .left-select {
+    background: #342f2e;
+    border-bottom-left-radius: 20px;
+    border-top-left-radius: 20px;
+}
+
+.chat .mode-choice .right-select {
+    background: #342f2e;
+    border-bottom-right-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+
 .chat .chat-container .logo {
     display: flex;
     justify-content: center;
@@ -134,7 +170,6 @@
     font-family: Inter, sans-serif;
     font-weight: 400;
     padding: 12px 55px 10px 20px;
-    overflow-y: none;
     max-height: 300px;
     box-sizing: border-box;
 }

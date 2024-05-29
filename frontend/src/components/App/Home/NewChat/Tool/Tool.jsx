@@ -14,7 +14,6 @@ const Tool = ({name, infos, onClick, disabled}) =>
                 <div className="tool-info animate__animated animate__fadeIn">
                     <span>{infos}</span>
                 </div>
-
             </div>
         </>
     )

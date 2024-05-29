@@ -65,7 +65,7 @@ const SideBar = ({className, handleModal, setModalOptions, handleSideBar, user, 
         <div className={className}>
             <div className="logo">
                 <img src={Logo} alt="logo" />
-                <Tool name="arrow_back_ios" infos="Close" onClick={handleSideBar} />
+                <Tool name="arrow_back_ios" infos="Close" onClick={handleSideBar}/>
             </div>
             <History allChats = {allChats} />
             {user && (<div className="settings" onClick={handleSettingsClick}>
