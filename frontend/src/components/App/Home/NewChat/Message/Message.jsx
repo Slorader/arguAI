@@ -1,29 +1,65 @@
 import React, { useState, useEffect, useRef } from "react";
 import BotLogo from "../../../../../../public/images/AR_notext_white.png";
+import axios from "axios";
 
-const Message = ({ type, value }) => {
+const TextWithLineBreaks = ({ text }) => {
+    return text.split('\n').map((str, index) => (
+        <React.Fragment key={index}>
+            {str}
+            <br />
+        </React.Fragment>
+    ));
+};
+
+const Message = ({ type, value, chatId }) => {
     const [text, setText] = useState("");
     const paragraphRef = useRef(null);
     const loading = useRef(true);
+    const [analyse, setAnalyse] = useState(null);
 
     useEffect(() => {
         if (type === "bot") {
-            setTimeout(() => {
+            if (!localStorage.getItem('animationPlayed')) {
+                setTimeout(() => {
+                    loading.current.style.display = "none";
+                    paragraphRef.current.style.display = "block";
+                    getAnalyse();
+                }, 3000);
+                localStorage.setItem('animationPlayed', 'true');
+            } else {
+                // If animation has already played, directly display the text
                 loading.current.style.display = "none";
                 paragraphRef.current.style.display = "block";
-                animateText();
-            }, 3000);
+                getAnalyse();
+            }
         }
     }, [type]);
 
+    useEffect(() => {
+        if (analyse) {
+            animateText();
+        }
+    }, [analyse]);
+
+    const getAnalyse = async () => {
+        if (chatId) {
+            try {
+                const response = await axios.get(`http://127.0.0.1:5000/api/analyses/get/${chatId}`);
+                console.log(response.data);
+                setAnalyse(response.data);
+            } catch (error) {
+                console.error("Erreur lors de la récupération des données de l'analyse:", error);
+            }
+        }
+    };
+
     const animateText = () => {
-        const fullText = `After an argument analysis, here are your results :
+        let fullText = "Here is your argument analysis:\n\n";
 
-    1 sub-conclusion : “Fall is the best time to visit America’s great cities, beaches, and mountains”
-    3 premises : “The foliage is breath-taking” , “the weather is cooler”, “the crowds are gone”
-    1 conclusion : “you can really relax and enjoy yourself”
-
-    Here is your diagram :`;
+        analyse.nodes.forEach((node, index) => {
+            fullText += `${node.text}\n`;
+            fullText += `Type: ${node.type}\n\n`;
+        });
 
         let index = 0;
 
@@ -44,9 +80,7 @@ const Message = ({ type, value }) => {
                         <span>LT</span>
                     </div>
                     <div className="user-message">
-                        <p>
-                            {value}
-                        </p>
+                        <p>{value}</p>
                     </div>
                 </div>
             )}
@@ -58,7 +92,7 @@ const Message = ({ type, value }) => {
                     <div className="bot-message">
                         <div ref={loading} className="loading"></div>
                         <p ref={paragraphRef} style={{ display: "none" }}>
-                            {text}
+                            <TextWithLineBreaks text={text} />
                         </p>
                     </div>
                 </div>

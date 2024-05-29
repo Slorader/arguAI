@@ -36,7 +36,7 @@ nlp = spacy.load("en_core_web_sm")
 
 conclusion_keywords = [
     'so', 'therefore', 'thus', 'then', 'consequently', 'hence', 'accordingly',
-    'as a result', 'because', 'as such', 'henceforth', 'henceforward', 'subsequently'
+    'as a result', 'as such', 'henceforth', 'henceforward', 'subsequently'
 ]
 
 def preprocess_text(text):
@@ -130,7 +130,7 @@ def create_json_output(sentences, predictions):
 analyses = Blueprint('analyses', __name__)
 
 @analyses.route('/', methods=['POST'])
-def get_analyses():
+def call_analyses():
     data = request.json
     text = data.get('message')
 
@@ -139,16 +139,18 @@ def get_analyses():
 
     doc = nlp(text)
     sentences = segment_text(doc)
+    sentences = [sentence for sentence in sentences if sentence.strip() != '']
+
     predictions = [predict_category(sentence) for sentence in sentences]
 
     output_json = create_json_output(sentences, predictions)
+    print('ICI')
+    print(sentences, predictions)
     return jsonify(json.loads(output_json))
 
 @analyses.route('/add/<chat_id>', methods=['POST'])
 def add_analysis(chat_id):
     data = request.json
-    print("données")
-    print(data)
     analysis_ref = db.collection('Analyses').document()
     analysis_ref.set({'chat_id': chat_id})
 
@@ -171,3 +173,38 @@ def add_analysis(chat_id):
         })
 
     return jsonify({"status": "success", "analysis_id": analysis_ref.id})
+
+@analyses.route('/get/<chat_id>', methods=['GET'])
+def get_analysis(chat_id):
+    try:
+        analysis_query = db.collection('Analyses').where('chat_id', '==', chat_id).stream()
+        analysis_id = None
+        for analysis in analysis_query:
+            analysis_id = analysis.id
+            break
+
+        if not analysis_id:
+            return jsonify({"error": "Analysis not found"}), 404
+
+        nodes_query = db.collection('Nodes').where('analyse_id', '==', analysis_id).stream()
+        nodes = []
+        for node in nodes_query:
+            nodes.append(node.to_dict())
+
+        edges_query = db.collection('Edges').where('analyse_id', '==', analysis_id).stream()
+        edges = []
+        for edge in edges_query:
+            edges.append(edge.to_dict())
+
+        response_data = {
+            'analysis_id': analysis_id,
+            'chat_id': chat_id,
+            'nodes': nodes,
+            'edges': edges
+        }
+
+        return jsonify(response_data)
+
+    except Exception as e:
+        print(f"Error retrieving analysis: {e}")
+        return jsonify({"status": "error", "message": "Error retrieving analysis"}), 500

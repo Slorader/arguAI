@@ -6,8 +6,6 @@ import {useNavigate} from 'react-router-dom';
 
 const NewChat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOptions, notifyNewChat}) => {
 
-
-
     const textAreaRef = useRef(null)
     const [val, setVal] = useState("");
     const [currentDateTime, setCurrentDateTime] = useState(new Date());
@@ -48,10 +46,14 @@ const NewChat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModa
         handleModal();
     };
 
+    function removeSpaceEnd(text) {
+        return text.replace(/[\s\n]+$/, '');
+    }
+
     const sendMessageToServer = async () => {
         const currentDateTime = new Date().toISOString();
         const data = {
-            text: val,
+            text: removeSpaceEnd(val),
             user_uid: auth.currentUser.uid,
             created: currentDateTime,
             modified: currentDateTime,
@@ -102,14 +104,12 @@ const NewChat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModa
                 throw new Error('Failed to save analysis in database');
             }
 
-            console.log('Analysis saved successfully');
             navigate(`/chat/${chat_id}`);
         } catch (error) {
             console.error('Error:', error);
         }
 
     };
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();

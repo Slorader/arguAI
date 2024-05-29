@@ -14,7 +14,6 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
     const [chat, setChat] = useState(null);
     const navigate = useNavigate();
 
-
     useEffect(() => {
         const fetchChatData = async () => {
             try {
@@ -27,8 +26,6 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
 
         fetchChatData();
     }, [chatId]);
-
-
 
     const handleArrowButton = () => {
         if (isSideBarOpen) {
@@ -57,7 +54,7 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
             <div className="chat-container">
                 <div className="message-container">
                     <Message type="user" value={chat}/>
-                    <Message type="bot"/>
+                    <Message type="bot" chatId={chatId}/>
                 </div>
             </div>
         </div>
