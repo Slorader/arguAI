@@ -122,16 +122,22 @@ const Modal = ({handleModal, modalOptions, userDetails, notifyNewChat}) => {
                         {binChats.map(chat => (
                             <div className="option-deleted" key={chat.id}>
                                 <a href={`/chat/${chat.id}`}>{chat.text}</a>
-                                <button onClick={() => {restoreChats(chat.id)}}>
+                                <div className="buttons-deleted">
+                                    <button onClick={() => {
+                                        restoreChats(chat.id)
+                                    }}>
                                     <span className="material-symbols-rounded">
                                         restore_from_trash
                                     </span>
-                                </button>
-                                <button onClick={() => {deleteChats(chat.id)}}>
+                                    </button>
+                                    <button onClick={() => {
+                                        deleteChats(chat.id)
+                                    }}>
                                     <span className="material-symbols-rounded">
                                         delete
                                     </span>
-                                </button>
+                                    </button>
+                                </div>
                             </div>
                         ))}
                     </div>

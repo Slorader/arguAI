@@ -2,7 +2,7 @@ import Tool from "../../Home/NewChat/Tool/Tool.jsx";
 import Logo from '../../../../../public/images/AR_white.png'
 import Message from "../../Home/NewChat/Message/Message.jsx";
 import '../../Home/NewChat/Message/message.css'
-import drawGraph from './Graph/Graph.jsx'; // Assurez-vous que le chemin vers votre fonction drawGraph est correctimport {useRef, useState, useEffect} from "react";
+import drawGraph from './Graph/Graph.jsx';
 import {auth, db} from "../../Firebase/firebase.jsx";
 import {Navigate, useNavigate, useParams} from 'react-router-dom';
 import {doc, getDoc} from "firebase/firestore";
