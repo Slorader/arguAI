@@ -67,7 +67,7 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
     }
 
     return (
-        <div className={className}>
+        <div className={`${className} ${viewSchema ? 'view-schema' : ''}`}>
             <div className="tools">
                 {handleArrowButton()}
                 <Tool name="add_circle" infos="New chat" onClick={redirect}  />

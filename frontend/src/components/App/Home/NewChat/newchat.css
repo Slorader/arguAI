@@ -5,7 +5,11 @@
     width: 100%;
     height: 100%;
     transition: transform 0.3s ease-out;
-    overflow-y: auto;
+    overflow: auto;
+}
+
+.chat.view-schema {
+    overflow: hidden;
 }
 
 .home {
@@ -98,10 +102,12 @@
 
 .chat .schema-container {
     border-radius: 10px;
+    height: 100%;
 }
 
 .chat .schema-container svg {
     width: 100%;
+    height: 100%;
 }
 
 .chat .mode-choice {
