@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import {auth, db} from "./Firebase/firebase.jsx";
+import { auth, db } from "./Firebase/firebase.jsx";
 import Logo from "../../../public/images/AR_notext_white.png";
 import SideBar from "./SideBar/SideBar.jsx";
 import Home from "./Home/Home.jsx";
@@ -10,7 +10,7 @@ import Login from "./Auth/Login/Login.jsx";
 import Register from "./Auth/Register/Register.jsx";
 import Test from "./Test/Test.jsx";
 import Modal from "./Modal/Modal.jsx";
-import {doc, getDoc} from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 
 function App() {
     const [user, setUser] = useState(null);
@@ -25,7 +25,6 @@ function App() {
         setNewChatNotification(!newChatNotification);
     };
 
-
     const handleSideBar = () => {
         setIsSideBarOpen(!isSideBarOpen);
     };
@@ -33,8 +32,6 @@ function App() {
     const handleModal = () => {
         setIsModalOpen(!isModalOpen);
     };
-
-
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -76,8 +73,6 @@ function App() {
         return unsubscribe;
     }, []);
 
-
-
     const sidebarClass = `sideBar ${isSideBarOpen ? '' : 'sideBar-closed '}`;
 
     if (isLoading) {
@@ -86,24 +81,27 @@ function App() {
 
     return (
         <BrowserRouter>
-            {user && (<SideBar className={sidebarClass}
-                     handleSideBar={handleSideBar}
-                     setModalOptions={setModalOptions}
-                     user={user}
-                     handleModal={handleModal}
-                               notifyNewChat = {newChatNotification}
-            />)}
+            {user && (
+                <SideBar
+                    className={sidebarClass}
+                    handleSideBar={handleSideBar}
+                    setModalOptions={setModalOptions}
+                    user={user}
+                    handleModal={handleModal}
+                    notifyNewChat={newChatNotification}
+                />
+            )}
             <Routes>
                 <Route path="/chat" element={!user ? <Navigate to="/login" /> : <Home
                     className={sidebarClass}
                     handleSideBar={handleSideBar}
                     isSideBarOpen={isSideBarOpen}
                     handleModal={handleModal}
-                    chatClass ={chatClass}
+                    chatClass={chatClass}
                     isModalOpen={isModalOpen}
                     modalOptions={modalOptions}
                     setModalOptions={setModalOptions}
-                    notifyNewChat = {notifyNewChat}
+                    notifyNewChat={notifyNewChat}
                 />} />
                 <Route path="/login" element={user ? <Navigate to="/chat" /> : <Login />} />
                 <Route path="/register" element={user ? <Navigate to="/chat" /> : <Register />} />
@@ -112,11 +110,12 @@ function App() {
                     handleSideBar={handleSideBar}
                     isSideBarOpen={isSideBarOpen}
                     handleModal={handleModal}
-                    chatClass ={chatClass}
+                    chatClass={chatClass}
                     isModalOpen={isModalOpen}
                     modalOptions={modalOptions}
                     setModalOptions={setModalOptions}
                 />} />
+                <Route path="*" element={<Navigate to="/chat" />} />
             </Routes>
             <ToastContainer />
             {isModalOpen && <Modal handleModal={handleModal} notifyNewChat={notifyNewChat} modalOptions={modalOptions} userDetails={user} />}

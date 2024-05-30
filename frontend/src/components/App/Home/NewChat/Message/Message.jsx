@@ -15,6 +15,7 @@ const Message = ({ type, value, chatId, analyse }) => {
     const paragraphRef = useRef(null);
     const loadingRef = useRef(null);
 
+
     useEffect(() => {
         if (type === "bot" && chatId && analyse) {
             const animationPlayed = localStorage.getItem(`animationPlayed_${chatId}`);

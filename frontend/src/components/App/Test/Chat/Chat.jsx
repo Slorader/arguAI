@@ -9,7 +9,7 @@ import {doc, getDoc} from "firebase/firestore";
 import axios from "axios";
 import {useEffect, useState} from "react";
 
-const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOptions}) => {
+const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOptions, userDetails}) => {
     const { chatId } = useParams();
     const [chat, setChat] = useState(null);
     const navigate = useNavigate();
@@ -20,7 +20,12 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
         const fetchChatData = async () => {
             try {
                 const response = await axios.get(`http://127.0.0.1:5000/api/chats/${chatId}`);
-                setChat(response.data.chat.text);
+                if(auth.currentUser.uid !== response.data.chat.user_uid)
+                {
+                    navigate('/chat');
+                }else {
+                    setChat(response.data.chat.text);
+                }
             } catch (error) {
                 console.error("Erreur lors de la récupération des données du chat:", error);
             }
@@ -38,6 +43,8 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
         fetchChatData();
         fetchAnalyseData();
     }, [chatId]);
+
+
 
     useEffect(() => {
         if(analyse)

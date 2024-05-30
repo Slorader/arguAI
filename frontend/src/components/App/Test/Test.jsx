@@ -44,7 +44,6 @@ const Test = ({handleSideBar, isSideBarOpen, handleModal, chatClass, setModalOpt
                 setModalOptions={setModalOptions}
                 userDetails={user}
             />
-
         </>
     );
 };
