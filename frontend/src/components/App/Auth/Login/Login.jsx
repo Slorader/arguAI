@@ -38,11 +38,11 @@ const Login = () => {
                 });
             }
 
-            window.location.href = "/chat";
-            toast.success("User logged in successfully!", { position: "top-right" });
+            navigate("/chat");
+            toast.success("User logged in successfully with Google!", { position: "top-right" });
         } catch (error) {
             console.error(error.message);
-            toast.error(error.message, { position: "top-right" });
+            toast.error("Incorrect email or password.", { position: "top-right" });
         }
     };
 
@@ -57,7 +57,7 @@ const Login = () => {
             });
         } catch (error) {
             console.log(error.message);
-            toast.error(error.message, {
+            toast.error("Incorrect email or password.", {
                 position : "top-right",
             });
         }

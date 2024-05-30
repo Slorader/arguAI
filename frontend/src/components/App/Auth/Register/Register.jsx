@@ -19,43 +19,42 @@ const Register = () => {
     const [password, setPassord] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
-
     const handleRegister = async (e) => {
         e.preventDefault();
-        if (confirmPassword === password)
-        {
-            try {
-                await createUserWithEmailAndPassword(auth,email,password);
-                const user = auth.currentUser;
-                console.log(user);
-                if (user) {
-                    await setDoc(doc(db,"Users", user.uid),{
-                        email : user.email,
-                        firstName : fname,
-                        lastName : lname,
-                        uid : user.uid,
-                    });
-                }
-                toast.success("User registered successfully !", {
-                    position : "top-right",
 
-                });
-            } catch(error) {
-                console.log(error.message);
-                toast.error(error.message, {
-                    position : "top-right",
-
-                });
-            }
-
-        } else {
-            toast.error("Passwords do not match.", {
-                position : "top-right",
-
+        if (!fname || !lname || !email || !password || !confirmPassword) {
+            toast.error("All fields are required.", {
+                position: "top-right",
             });
+            return;
         }
 
+        if (confirmPassword !== password) {
+            toast.error("Passwords do not match.", {
+                position: "top-right",
+            });
+            return;
+        }
 
+        try {
+            await createUserWithEmailAndPassword(auth, email, password);
+            const user = auth.currentUser;
+            if (user) {
+                await setDoc(doc(db, "Users", user.uid), {
+                    email: user.email,
+                    firstName: fname,
+                    lastName: lname,
+                    uid: user.uid,
+                });
+            }
+            toast.success("User registered successfully!", {
+                position: "top-right",
+            });
+        } catch (error) {
+            toast.error("Email already exists.", {
+                position: "top-right",
+            });
+        }
     };
 
     const saveUserToFirestore = async (user) => {
@@ -89,17 +88,16 @@ const Register = () => {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
             await saveUserToFirestore(user);
-            toast.success("Logged in with Google successfully !", {
-                position : "top-right",
+            toast.success("Logged in with Google successfully!", {
+                position: "top-right",
             });
-        } catch(error) {
+        } catch (error) {
             console.log(error.message);
             toast.error(error.message, {
-                position : "top-right",
+                position: "top-right",
             });
         }
     };
-
 
     return (
         <div className="login">
@@ -112,7 +110,7 @@ const Register = () => {
                         <span>Start on Argu </span>
                         <span className="colored">AI</span>
                     </div>
-                    <p>"Lorem" is typically the beginning of a placeholder text known as "Lorem Ipsum." This text is used in the publishing and typesetting industry to  demonstrate the visual appearance of a document or website without  relying on meaningful content. Lorem Ipsum has been the industry's  standard dummy text ever since the 1500s.</p>
+                    <p>"Lorem" is typically the beginning of a placeholder text known as "Lorem Ipsum." This text is used in the publishing and typesetting industry to demonstrate the visual appearance of a document or website without relying on meaningful content. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
                 </div>
                 <div className="login-form">
                     <div className="title">
