@@ -110,7 +110,8 @@ const Register = () => {
                         <span>Start on Argu </span>
                         <span className="colored">AI</span>
                     </div>
-                    <p>"Lorem" is typically the beginning of a placeholder text known as "Lorem Ipsum." This text is used in the publishing and typesetting industry to demonstrate the visual appearance of a document or website without relying on meaningful content. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                    <p>Argu AI is a cutting-edge solution for automated argumentative analysis. Our platform, powered by artificial intelligence, is designed to help you analyse and structure arguments efficiently and accurately. Whether you are a student, researcher, professional or simply passionate about debates and argumentation, Argu AI gives you the tools you need to optimise your analyses.
+                    </p>
                 </div>
                 <div className="login-form">
                     <div className="title">
