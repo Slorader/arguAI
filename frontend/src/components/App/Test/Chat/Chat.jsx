@@ -2,18 +2,19 @@ import Tool from "../../Home/NewChat/Tool/Tool.jsx";
 import Logo from '../../../../../public/images/AR_white.png'
 import Message from "../../Home/NewChat/Message/Message.jsx";
 import '../../Home/NewChat/Message/message.css'
-
-import {useRef, useState, useEffect} from "react";
+import drawGraph from './Graph/Graph.jsx'; // Assurez-vous que le chemin vers votre fonction drawGraph est correctimport {useRef, useState, useEffect} from "react";
 import {auth, db} from "../../Firebase/firebase.jsx";
 import {Navigate, useNavigate, useParams} from 'react-router-dom';
 import {doc, getDoc} from "firebase/firestore";
 import axios from "axios";
+import {useEffect, useState} from "react";
 
 const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOptions}) => {
     const { chatId } = useParams();
     const [chat, setChat] = useState(null);
     const navigate = useNavigate();
     const [viewSchema, setViewSchema] = useState(false);
+    const [analyse, setAnalyse] = useState(null);
 
     useEffect(() => {
         const fetchChatData = async () => {
@@ -25,8 +26,25 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
             }
         };
 
+        const fetchAnalyseData = async () => {
+            try {
+                const response = await axios.get(`http://127.0.0.1:5000/api/analyses/get/${chatId}`);
+                setAnalyse(response.data);
+            } catch (error) {
+                console.error("Erreur lors de la récupération des données de l'analyse:", error);
+            }
+        };
+
         fetchChatData();
+        fetchAnalyseData();
     }, [chatId]);
+
+    useEffect(() => {
+        if(analyse)
+        {
+            drawGraph(analyse);
+        }
+    }, [analyse, viewSchema]);
 
     const handleViews = () => {
         setViewSchema(!viewSchema);
@@ -48,7 +66,6 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
         navigate('/chat');
     }
 
-
     return (
         <div className={className}>
             <div className="tools">
@@ -68,11 +85,10 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
             {!viewSchema && (<div className="chat-container">
                 <div className="message-container">
                     <Message type="user" value={chat}/>
-                    <Message type="bot" chatId={chatId}/>
+                    <Message type="bot" chatId={chatId} analyse={analyse}/>
                 </div>
             </div>)}
             {viewSchema && (<div className="schema-container">
-
             </div>)}
         </div>
     );

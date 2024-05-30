@@ -96,6 +96,14 @@
     font-weight: 200;
 }
 
+.chat .schema-container {
+    border-radius: 10px;
+}
+
+.chat .schema-container svg {
+    width: 100%;
+}
+
 .chat .mode-choice {
     display: flex;
     align-items: center;

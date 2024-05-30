@@ -144,8 +144,6 @@ def call_analyses():
     predictions = [predict_category(sentence) for sentence in sentences]
 
     output_json = create_json_output(sentences, predictions)
-    print('ICI')
-    print(sentences, predictions)
     return jsonify(json.loads(output_json))
 
 @analyses.route('/add/<chat_id>', methods=['POST'])
