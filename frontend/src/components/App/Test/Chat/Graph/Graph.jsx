@@ -9,7 +9,6 @@ const drawGraph = (data) => {
         return;
     }
 
-    // Clear any existing svg to avoid duplicates
     d3.select('.schema-container').select('svg').remove();
 
     const svg = d3.select('.schema-container')
@@ -21,17 +20,16 @@ const drawGraph = (data) => {
         }))
         .append('g');
 
-    // Defining markers for arrows
     const defs = svg.append('defs');
 
     defs.append('marker')
         .attr('id', 'arrowhead')
         .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 25) // Adjusted for better visibility
+        .attr('refX', 25)
         .attr('refY', 0)
         .attr('orient', 'auto')
-        .attr('markerWidth', 10) // Increased size
-        .attr('markerHeight', 10) // Increased size
+        .attr('markerWidth', 10)
+        .attr('markerHeight', 10)
         .attr('overflow', 'visible')
         .append('svg:path')
         .attr('d', 'M 0,-5 L 10,0 L 0,5')
@@ -121,7 +119,6 @@ const drawGraph = (data) => {
         .attr('fill', '#ffffff')
         .text(d => d.type);
 
-    // Adding text labels for each node
     const labels = svg.append('g')
         .selectAll('text')
         .data(data.nodes)
@@ -142,7 +139,7 @@ const drawGraph = (data) => {
                 const dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
                 const normX = deltaX / dist;
                 const normY = deltaY / dist;
-                const offset = 10; // Adjust this value as needed
+                const offset = 10;
                 return d.target.x - (normX * offset);
             })
             .attr('y2', d => {
@@ -151,7 +148,7 @@ const drawGraph = (data) => {
                 const dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
                 const normX = deltaX / dist;
                 const normY = deltaY / dist;
-                const offset = 10; // Adjust this value as needed
+                const offset = 10;
                 return d.target.y - (normY * offset);
             });
 
