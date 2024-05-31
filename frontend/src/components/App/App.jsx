@@ -8,7 +8,7 @@ import SideBar from "./SideBar/SideBar.jsx";
 import Home from "./Home/Home.jsx";
 import Login from "./Auth/Login/Login.jsx";
 import Register from "./Auth/Register/Register.jsx";
-import Test from "./Test/Test.jsx";
+import ChatContainer from "./ChatContainer/ChatContainer.jsx";
 import Modal from "./Modal/Modal.jsx";
 import { doc, getDoc } from "firebase/firestore";
 
@@ -20,6 +20,16 @@ function App() {
     const [modalOptions, setModalOptions] = useState([]);
     const chatClass = `chat ${isSideBarOpen ? '' : 'chat-fullscreen '}`;
     const [newChatNotification, setNewChatNotification] = useState(false);
+    const [updateSettings, setUpdateSettings] = useState(false);
+    const [updateSideBarSettings, setUpdateSideBarSettings] = useState(false);
+
+    const notifySettings = () => {
+        setUpdateSettings(!updateSettings);
+    }
+
+    const notifySideBarSettings = () => {
+        setUpdateSideBarSettings(!updateSideBarSettings);
+    }
 
     const notifyNewChat = () => {
         setNewChatNotification(!newChatNotification);
@@ -69,9 +79,10 @@ function App() {
                 setUser(null);
             }
             setIsLoading(false);
+            notifySideBarSettings();
         });
         return unsubscribe;
-    }, []);
+    }, [updateSettings]);
 
     const sidebarClass = `sideBar ${isSideBarOpen ? '' : 'sideBar-closed '}`;
 
@@ -89,6 +100,7 @@ function App() {
                     user={user}
                     handleModal={handleModal}
                     notifyNewChat={newChatNotification}
+                    updateSideBarSettings={updateSideBarSettings}
                 />
             )}
             <Routes>
@@ -105,7 +117,7 @@ function App() {
                 />} />
                 <Route path="/login" element={user ? <Navigate to="/chat" /> : <Login />} />
                 <Route path="/register" element={user ? <Navigate to="/chat" /> : <Register />} />
-                <Route path="/chat/:chatId" element={!user ? <Navigate to="/login" /> : <Test
+                <Route path="/chat/:chatId" element={!user ? <Navigate to="/login" /> : <ChatContainer
                     className={sidebarClass}
                     handleSideBar={handleSideBar}
                     isSideBarOpen={isSideBarOpen}
@@ -118,7 +130,13 @@ function App() {
                 <Route path="*" element={<Navigate to="/chat" />} />
             </Routes>
             <ToastContainer />
-            {isModalOpen && <Modal handleModal={handleModal} notifyNewChat={notifyNewChat} modalOptions={modalOptions} userDetails={user} />}
+            {isModalOpen && <Modal
+                handleModal={handleModal}
+                notifyNewChat={notifyNewChat}
+                modalOptions={modalOptions}
+                userDetails={user}
+                notifySettings={notifySettings}
+            />}
         </BrowserRouter>
     );
 }

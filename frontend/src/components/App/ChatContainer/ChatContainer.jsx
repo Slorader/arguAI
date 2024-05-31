@@ -9,10 +9,9 @@ import {auth, db} from "../Firebase/firebase.jsx";
 import {doc, getDoc} from "firebase/firestore";
 import Chat from "./Chat/Chat.jsx";
 
-const Test = ({handleSideBar, isSideBarOpen, handleModal, chatClass, setModalOptions, user}) => {
+const ChatContainer = ({handleSideBar, isSideBarOpen, handleModal, chatClass, setModalOptions, user}) => {
+
     const [userDetails, setUserDetails] = useState(null);
-
-
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -48,4 +47,4 @@ const Test = ({handleSideBar, isSideBarOpen, handleModal, chatClass, setModalOpt
     );
 };
 
-export default Test
+export default ChatContainer

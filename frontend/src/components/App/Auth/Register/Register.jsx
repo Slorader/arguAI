@@ -130,7 +130,6 @@ const Register = () => {
                         <div className="line"></div>
                         <span>Or</span>
                     </div>
-
                     <form onSubmit={handleRegister} className="form">
                         <div className="input-line">
                             <Input name="name" typeInput="text" onChange={(e) => setFname(e.target.value)}

@@ -10,10 +10,11 @@ import {getDoc, doc} from "firebase/firestore"
 import axios from "axios";
 
 
-const SideBar = ({className, handleModal, setModalOptions, handleSideBar, user, notifyNewChat}) =>
+const SideBar = ({className, handleModal, setModalOptions, handleSideBar, user, notifyNewChat, updateSideBarSettings}) =>
 {
 
     const [allChats, setAllChats] = useState([]);
+    const [currentUser, setCurrentUser] = useState(user);
 
     useEffect(() => {
         const fetchChatData = async () => {
@@ -34,8 +35,9 @@ const SideBar = ({className, handleModal, setModalOptions, handleSideBar, user, 
         fetchChatData();
     }, [notifyNewChat]);
 
-
-
+    useEffect(() => {
+        setCurrentUser(user);
+    }, [updateSideBarSettings]);
 
     async function handleLogout() {
         try {
@@ -68,21 +70,21 @@ const SideBar = ({className, handleModal, setModalOptions, handleSideBar, user, 
                 <Tool name="arrow_back_ios" infos="Close" onClick={handleSideBar}/>
             </div>
             <History allChats = {allChats} />
-            {user && (<div className="settings" onClick={handleSettingsClick}>
+            {currentUser && (<div className="settings" onClick={handleSettingsClick}>
                 <div className="user-icon">
                         <span>
-                            {user.firstName.substring(0, 1).toUpperCase()}{user.lastName.substring(0, 1).toUpperCase()}
+                            {currentUser.firstName.substring(0, 1).toUpperCase()}{currentUser.lastName.substring(0, 1).toUpperCase()}
                         </span>
                 </div>
-                <p>{user.firstName} {user.lastName}</p>
+                <p>{currentUser.firstName} {currentUser.lastName}</p>
                 <span className="material-symbols-rounded">
                         expand_all
                     </span>
             </div>)}
             {isModalOpen && (<div className="modal-settings animate__animated animate__fadeIn">
                 <div className="user-infos">
-                    <span>{user.firstName}</span>
-                    <p>{user.email}</p>
+                    <span>{currentUser.firstName} {currentUser.lastName}</span>
+                    <p>{currentUser.email}</p>
                 </div>
                 <div className="settings-line" onClick={handleDeletedButton}>
                     <a>Chats deleted</a>

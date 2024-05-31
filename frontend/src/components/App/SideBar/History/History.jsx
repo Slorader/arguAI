@@ -4,11 +4,15 @@ import { useEffect, useState } from "react";
 import login from "../../Auth/Login/Login.jsx";
 import {auth} from "../../Firebase/firebase.jsx";
 import axios from "axios";
+import {useNavigate} from 'react-router-dom';
+
 
 const History = ({ allChats }) => {
     const [todayChats, setTodayChats] = useState([]);
     const [yesterdayChats, setYesterdayChats] = useState([]);
     const [last7DaysChats, setLast7DaysChats] = useState([]);
+    const navigate = useNavigate();
+
 
     const today = new Date();
     const yesterday = new Date(today);
@@ -74,7 +78,12 @@ const History = ({ allChats }) => {
                         .sort((a, b) => new Date(b.created) - new Date(a.created))
                         .map(chat => (
                             <div className={'text'} key={chat.id}>
-                                <a href={`/chat/${chat.id}`}>{chat.text}</a>
+                                <a href='#'
+                                   onClick={(e) => {
+                                    e.preventDefault();
+                                    navigate(`/chat/${chat.id}`);
+                                    }}>{chat.text}
+                                </a>
                                 <button onClick={() => addToBin(chat)}>
                                     <span className="material-symbols-rounded">delete</span>
                                 </button>
@@ -90,7 +99,12 @@ const History = ({ allChats }) => {
                         .sort((a, b) => new Date(b.created) - new Date(a.created))
                         .map(chat => (
                             <div className={'text'} key={chat.id}>
-                                <a href={`/chat/${chat.id}`}>{chat.text}</a>
+                                <a href='#'
+                                   onClick={(e) => {
+                                       e.preventDefault();
+                                       navigate(`/chat/${chat.id}`);
+                                   }}>{chat.text}
+                                </a>
                                 <button onClick={() => addToBin(chat)}>
                                     <span className="material-symbols-rounded">delete</span>
                                 </button>
@@ -106,7 +120,12 @@ const History = ({ allChats }) => {
                         .sort((a, b) => new Date(b.created) - new Date(a.created))
                         .map(chat => (
                             <div className={'text'} key={chat.id}>
-                                <a href={`/chat/${chat.id}`}>{chat.text}</a>
+                                <a href='#'
+                                   onClick={(e) => {
+                                       e.preventDefault();
+                                       navigate(`/chat/${chat.id}`);
+                                   }}>{chat.text}
+                                </a>
                                 <button onClick={() => addToBin(chat)}>
                                     <span className="material-symbols-rounded">delete</span>
                                 </button>

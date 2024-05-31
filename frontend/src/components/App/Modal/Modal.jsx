@@ -7,8 +7,10 @@ import {useEffect, useState} from "react";
 import {auth, db} from "../Firebase/firebase.jsx";
 import axios from "axios";
 import GLogo from "../../../../public/images/google.png";
+import {toast} from "react-toastify";
 
-const Modal = ({handleModal, modalOptions, userDetails, notifyNewChat}) => {
+
+const Modal = ({handleModal, modalOptions, userDetails, notifyNewChat, notifySettings}) => {
 
     const [fname,setFname] = useState('');
     const [lname,setLname] = useState('');
@@ -45,7 +47,6 @@ const Modal = ({handleModal, modalOptions, userDetails, notifyNewChat}) => {
     }, []);
 
     const modifyUser = async () => {
-        console.log(auth.currentUser);
         const user = auth.currentUser;
         const data = {
             firstName: fname,
@@ -57,10 +58,17 @@ const Modal = ({handleModal, modalOptions, userDetails, notifyNewChat}) => {
             try {
                 const userId = user.uid;
                 const response = await axios.post(`http://127.0.0.1:5000/api/users/modify/${userId}`, data);
-                console.log(response.data);
 
+                notifySettings();
+                toast.success("User informations updated successfully.", { position: "top-right" });
             } catch (error) {
-                console.error("Erreur lors de la modification des données de l'utilisateur:", error);
+                if (error.code === 'auth/requires-recent-login') {
+                    toast.error("Please re-authenticate and try again.", { position: "top-right" });
+                    console.error("Erreur d'authentification : l'utilisateur doit se reconnecter", error);
+                } else {
+                    toast.error("User update error.", { position: "top-right" });
+                    console.error("Erreur lors de la modification des données de l'utilisateur:", error);
+                }
             }
         } else {
             console.log('email invalide');
@@ -144,12 +152,12 @@ const Modal = ({handleModal, modalOptions, userDetails, notifyNewChat}) => {
                 )}
                 {modalOptions.title === "Account settings" && userDetails && (<div className="content-profile">
                     <div className="input-line">
-                        <Input nameInput="Name" value={fname} onChange={(e => setFname(e.target.value))}
+                        <Input nameInput="Name" disabled={auth.currentUser.displayName} value={fname} onChange={(e => setFname(e.target.value))}
                                idInput="name" typeInput="text"></Input>
-                        <Input nameInput="Last name" value={lname}
+                        <Input nameInput="Last name" disabled={auth.currentUser.displayName} value={lname}
                                onChange={(e => setLname(e.target.value))} idInput="last_name" typeInput="text"></Input>
                     </div>
-                    <Input nameInput="Email" idInput="email" value={email}
+                    <Input nameInput="Email" disabled={true} idInput="email" value={email}
                            onChange={(e => setEmail(e.target.value))} typeInput="email">
                     </Input>
                     <div className="google">
@@ -164,7 +172,7 @@ const Modal = ({handleModal, modalOptions, userDetails, notifyNewChat}) => {
                     </div>
                 </div>)}
                 {modalOptions.title === "Account settings" && (<div className="modal-btn">
-                    <Button name="Modify" onClick={modifyUser}></Button>
+                    <Button name="Modify" disabled={auth.currentUser.displayName} onClick={modifyUser}></Button>
                 </div>)}
             </div>
         </div>

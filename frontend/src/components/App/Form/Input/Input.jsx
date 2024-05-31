@@ -17,6 +17,7 @@ const Input = (props) => {
                 onChange={props.onChange}
                 value={props.value}
                 placeholder={props.placeholder}
+                disabled={props.disabled}
             />
             <label htmlFor={props.idInput} className={hasValue ? 'active' : ''}>
                 {props.nameInput}
