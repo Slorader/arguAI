@@ -40,7 +40,6 @@ const NewChat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModa
             , [val])
 
 
-
     const handleExportButton = () => {
         setModalOptions({title : 'Export', size: 'small'});
         handleModal();
@@ -61,20 +60,6 @@ const NewChat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModa
         };
 
         try {
-            const analysisResponse = await fetch('http://localhost:5000/api/analyses/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ message: val })
-            });
-
-            if (!analysisResponse.ok) {
-                throw new Error('Failed to send message to server');
-            }
-
-            const analysisData = await analysisResponse.json();
-            console.log('Response from server:', analysisData);
 
             const chatResponse = await fetch('http://localhost:5000/api/chats/add', {
                 method: 'POST',
@@ -91,6 +76,21 @@ const NewChat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModa
             const chatResult = await chatResponse.json();
             const chat_id = chatResult.docRef_id;
             notifyNewChat();
+
+            const analysisResponse = await fetch('http://localhost:5000/api/analyses/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: val })
+            });
+
+            if (!analysisResponse.ok) {
+                throw new Error('Failed to send message to server');
+            }
+
+            const analysisData = await analysisResponse.json();
+            console.log('Response from server:', analysisData);
 
             const analysisSaveResponse = await fetch(`http://localhost:5000/api/analyses/add/${chat_id}`, {
                 method: 'POST',

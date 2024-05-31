@@ -10,7 +10,7 @@ const TextWithLineBreaks = ({ text }) => {
     ));
 };
 
-const Message = ({ type, value, chatId, analyse }) => {
+const Message = ({ type, value, chatId, analyse, loading, setDisabled }) => {
     const [text, setText] = useState("");
     const paragraphRef = useRef(null);
     const loadingRef = useRef(null);
@@ -21,12 +21,14 @@ const Message = ({ type, value, chatId, analyse }) => {
             const animationPlayed = localStorage.getItem(`animationPlayed_${chatId}`);
             if (animationPlayed) {
                 displayFullText();
+                setDisabled();
             } else {
-                setTimeout(() => {
+                if (!loading)
+                {
                     loadingRef.current.style.display = "none";
                     paragraphRef.current.style.display = "block";
                     animateText();
-                }, 3000);
+                }
             }
         }
     }, [type, chatId, analyse]);
@@ -58,6 +60,7 @@ const Message = ({ type, value, chatId, analyse }) => {
                 localStorage.setItem(`animationPlayed_${chatId}`, 'true');
             }
         }, 10);
+        setDisabled();
     };
 
     return (

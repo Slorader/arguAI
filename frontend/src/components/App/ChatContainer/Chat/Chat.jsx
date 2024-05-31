@@ -1,7 +1,7 @@
 import Tool from "../../Home/NewChat/Tool/Tool.jsx";
 import Logo from '../../../../../public/images/AR_white.png'
-import Message from "../../Home/NewChat/Message/Message.jsx";
-import '../../Home/NewChat/Message/message.css'
+import Message from "./Message/Message.jsx";
+import './Message/message.css'
 import drawGraph from './Graph/Graph.jsx';
 import {auth, db} from "../../Firebase/firebase.jsx";
 import {Navigate, useNavigate, useParams} from 'react-router-dom';
@@ -15,6 +15,8 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
     const navigate = useNavigate();
     const [viewSchema, setViewSchema] = useState(false);
     const [analyse, setAnalyse] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [disabled, setDisabled] = useState(true);
 
     useEffect(() => {
         const fetchChatData = async () => {
@@ -42,6 +44,7 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
 
         fetchChatData();
         fetchAnalyseData();
+        setLoading(false);
     }, [chatId]);
 
 
@@ -77,22 +80,21 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
         <div className={`${className} ${viewSchema ? 'view-schema' : ''}`}>
             <div className="tools">
                 {handleArrowButton()}
-                <Tool name="add_circle" infos="New chat" onClick={redirect}  />
-                <Tool name="download" infos="Download" onClick={handleExportButton} />
-                <div onClick={handleViews} className="mode-choice">
+                <Tool name="add_circle" infos="New chat" onClick={redirect}/>
+                <Tool name="download" disabled={disabled} infos="Download" onClick={handleExportButton}/>
+                <div onClick={handleViews} className={disabled ? "mode-choice disabled" : "mode-choice"}>
                     <span className={`material-symbols-rounded ${!viewSchema ? 'left-select' : ''}`}>
                         sms
                     </span>
                     <span className={`material-symbols-rounded ${viewSchema ? 'right-select' : ''}`}>
                         timeline
                     </span>
-
                 </div>
             </div>
             {!viewSchema && (<div className="chat-container">
                 <div className="message-container">
                     <Message type="user" value={chat}/>
-                    <Message type="bot" chatId={chatId} analyse={analyse}/>
+                    <Message type="bot" loading={loading} setDisabled={setDisabled} chatId={chatId} analyse={analyse}/>
                 </div>
             </div>)}
             {viewSchema && (<div className="schema-container">

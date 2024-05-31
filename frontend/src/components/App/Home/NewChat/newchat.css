@@ -123,6 +123,9 @@
     cursor: pointer;
 }
 
+.chat .mode-choice .disabled {
+    opacity: .5;
+}
 .chat .mode-choice span {
     width: 50%;
     font-weight: 200;
