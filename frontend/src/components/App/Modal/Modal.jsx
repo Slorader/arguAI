@@ -16,6 +16,7 @@ const Modal = ({handleModal, modalOptions, userDetails, notifyNewChat, notifySet
     const [lname,setLname] = useState('');
     const [email,setEmail] = useState('');
     const [binChats, setBinChats] = useState([]);
+    const [chatId, setChatId] = useState("");
 
     const setUser = () => {
         setFname(userDetails.firstName);
@@ -43,6 +44,9 @@ const Modal = ({handleModal, modalOptions, userDetails, notifyNewChat, notifySet
                 }
             }
         };
+        const url = window.location.href;
+        const id = url.split('/').pop();
+        setChatId(id);
         fetchBinChats();
     }, []);
 
@@ -98,6 +102,21 @@ const Modal = ({handleModal, modalOptions, userDetails, notifyNewChat, notifySet
         }
     };
 
+    const exportJson = async () => {
+        try {
+            const response = await axios.get(`http://127.0.0.1:5000/api/analyses/get/${chatId}`);
+            const analyse = response.data;
+            const newWindow = window.open('', '_blank');
+            newWindow.document.write('<html><head><title>JSON data</title></head><body>');
+            newWindow.document.write('<pre>' + JSON.stringify(analyse, null, 2) + '</pre>');
+            newWindow.document.write('</body></html>');
+            newWindow.document.close();
+
+        } catch (error) {
+            console.error("Erreur lors de la récupération des données de l'analyse:", error);
+        }
+    }
+
 
     return (
 
@@ -112,7 +131,7 @@ const Modal = ({handleModal, modalOptions, userDetails, notifyNewChat, notifySet
                     </button>
                 </div>
                 {modalOptions.title === 'Export' && (<div className="content">
-                    <div className="option">
+                    <div onClick={exportJson} className="option">
                         <p>Export as JSON</p>
                         <span className="material-symbols-rounded">
                             description
