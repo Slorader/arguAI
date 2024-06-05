@@ -21,6 +21,7 @@ const Message = ({ type, value, chatId, analyse, loading, setDisabled }) => {
             const animationPlayed = localStorage.getItem(`animationPlayed_${chatId}`);
             if (animationPlayed) {
                 displayFullText();
+                console.log(analyse);
                 setDisabled();
             } else {
                 if (!loading)
@@ -41,10 +42,38 @@ const Message = ({ type, value, chatId, analyse, loading, setDisabled }) => {
 
     const formatFullText = (analyse) => {
         let fullText = "Here is your argument analysis:\n\n";
-        analyse.nodes.forEach((node) => {
-            fullText += `${node.text}\n`;
-            fullText += `Type: ${node.type}\n\n`;
-        });
+
+        const nodesDict = analyse.nodes.reduce((acc, node) => {
+            acc[node.text] = node;
+            return acc;
+        }, {});
+
+        const sourceToTargets = analyse.edges.reduce((acc, edge) => {
+            if (!acc[edge.text_source_id]) {
+                acc[edge.text_source_id] = [];
+            }
+            acc[edge.text_source_id].push(edge.text_target_id);
+            return acc;
+        }, {});
+
+        for (const source in sourceToTargets) {
+            const sourceNode = nodesDict[source];
+            if (sourceNode) {
+                fullText += `Source: ${sourceNode.text}\n`;
+                fullText += `Type: ${sourceNode.type}\n\n`;
+
+                sourceToTargets[source].forEach(target => {
+                    const targetNode = nodesDict[target];
+                    if (targetNode) {
+                        fullText += `Target: ${targetNode.text}\n`;
+                        fullText += `Type: ${targetNode.type}\n\n`;
+                    }
+                });
+
+                fullText += '---\n\n';
+            }
+        }
+
         return fullText;
     };
 

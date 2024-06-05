@@ -8,6 +8,7 @@ import {Navigate, useNavigate, useParams} from 'react-router-dom';
 import {doc, getDoc} from "firebase/firestore";
 import axios from "axios";
 import {useEffect, useState} from "react";
+import html2canvas from "html2canvas";
 
 const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOptions, userDetails}) => {
     const { chatId } = useParams();
@@ -75,6 +76,18 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
     const redirect = () => {
         navigate('/chat');
     }
+
+    const exportPNG = () => {
+        const graphContainer = document.querySelector('.schema-container');
+        if (graphContainer) {
+            html2canvas(graphContainer).then(canvas => {
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = 'graph.png';
+                link.click();
+            });
+        }
+    };
 
     return (
         <div className={`${className} ${viewSchema ? 'view-schema' : ''}`}>
