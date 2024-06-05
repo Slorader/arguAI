@@ -21,7 +21,6 @@ const Message = ({ type, value, chatId, analyse, loading, setDisabled }) => {
             const animationPlayed = localStorage.getItem(`animationPlayed_${chatId}`);
             if (animationPlayed) {
                 displayFullText();
-                console.log(analyse);
                 setDisabled();
             } else {
                 if (!loading)
@@ -56,15 +55,19 @@ const Message = ({ type, value, chatId, analyse, loading, setDisabled }) => {
             return acc;
         }, {});
 
+        const nodesWithRelations = new Set();
+
         for (const source in sourceToTargets) {
             const sourceNode = nodesDict[source];
             if (sourceNode) {
+                nodesWithRelations.add(sourceNode.text);
                 fullText += `Source: ${sourceNode.text}\n`;
                 fullText += `Type: ${sourceNode.type}\n\n`;
 
                 sourceToTargets[source].forEach(target => {
                     const targetNode = nodesDict[target];
                     if (targetNode) {
+                        nodesWithRelations.add(targetNode.text);
                         fullText += `Target: ${targetNode.text}\n`;
                         fullText += `Type: ${targetNode.type}\n\n`;
                     }
@@ -73,6 +76,14 @@ const Message = ({ type, value, chatId, analyse, loading, setDisabled }) => {
                 fullText += '---\n\n';
             }
         }
+
+        analyse.nodes.forEach(node => {
+            if (!nodesWithRelations.has(node.text)) {
+                fullText += `Node: ${node.text}\n`;
+                fullText += `Type: ${node.type}\n\n`;
+                fullText += '---\n\n';
+            }
+        });
 
         return fullText;
     };

@@ -77,18 +77,6 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
         navigate('/chat');
     }
 
-    const exportPNG = () => {
-        const graphContainer = document.querySelector('.schema-container');
-        if (graphContainer) {
-            html2canvas(graphContainer).then(canvas => {
-                const link = document.createElement('a');
-                link.href = canvas.toDataURL('image/png');
-                link.download = 'graph.png';
-                link.click();
-            });
-        }
-    };
-
     return (
         <div className={`${className} ${viewSchema ? 'view-schema' : ''}`}>
             <div className="tools">
@@ -110,7 +98,7 @@ const Chat = ({ handleSideBar, isSideBarOpen, className, handleModal, setModalOp
                     <Message type="bot" loading={loading} setDisabled={setDisabled} chatId={chatId} analyse={analyse}/>
                 </div>
             </div>)}
-            {viewSchema && (<div className="schema-container">
+            {viewSchema && (<div className="schema-container" id="schema-container">
             </div>)}
         </div>
     );

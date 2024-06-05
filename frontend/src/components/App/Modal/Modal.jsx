@@ -8,7 +8,8 @@ import Button from "../Form/Button/Button.jsx";
 import 'animate.css';
 import '../Form/Input/input.css';
 import '../Form/Button/buttons.css';
-import html2canvas from "html2canvas";
+import { toPng } from 'html-to-image';
+import download from 'downloadjs';
 
 const Modal = ({ handleModal, modalOptions, userDetails, notifyNewChat, notifySettings }) => {
     const [fname, setFname] = useState('');
@@ -114,6 +115,21 @@ const Modal = ({ handleModal, modalOptions, userDetails, notifyNewChat, notifySe
         }
     };
 
+    const handleCapture = () => {
+        const element = document.getElementById('schema-container');
+        if (!element) {
+            console.error('Element not found!');
+            return;
+        }
+        handleModal();
+        toPng(element)
+            .then((dataUrl) => {
+                download(dataUrl, chatId + ".png");
+            })
+            .catch((err) => {
+                console.error('oops, something went wrong!', err);
+            });
+    };
 
 
     return (
@@ -129,13 +145,13 @@ const Modal = ({ handleModal, modalOptions, userDetails, notifyNewChat, notifySe
                 </div>
                 {modalOptions.title === 'Export' && (
                     <div className="content">
-                        <div onClick={exportJson} className="option">
+                        <div  onClick={exportJson} className="option">
                             <p>Export as JSON</p>
                             <span className="material-symbols-rounded">
                                 description
                             </span>
                         </div>
-                        <div className="option">
+                        <div onClick={handleCapture} className="option">
                             <p>Export as PNG</p>
                             <span className="material-symbols-rounded">
                                 add_photo_alternate

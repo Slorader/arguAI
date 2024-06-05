@@ -103,6 +103,7 @@
 .chat .schema-container {
     border-radius: 10px;
     height: 100%;
+    background: #171311;
 }
 
 .chat .schema-container svg {
