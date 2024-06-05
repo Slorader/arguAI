@@ -1,18 +1,15 @@
 import './history.css';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from "react";
-import login from "../../Auth/Login/Login.jsx";
-import {auth} from "../../Firebase/firebase.jsx";
+import { auth } from "../../Firebase/firebase.jsx";
 import axios from "axios";
-import {useNavigate} from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
 
 const History = ({ allChats }) => {
     const [todayChats, setTodayChats] = useState([]);
     const [yesterdayChats, setYesterdayChats] = useState([]);
     const [last7DaysChats, setLast7DaysChats] = useState([]);
     const navigate = useNavigate();
-
 
     const today = new Date();
     const yesterday = new Date(today);
@@ -25,23 +22,19 @@ const History = ({ allChats }) => {
             const last7DaysChatsTemp = [];
 
             allChats.forEach(chat => {
+                if (chat.bin) return;
+
                 const chatDate = new Date(chat.created);
                 const chatDateString = chatDate.toDateString();
                 const todayString = today.toDateString();
                 const yesterdayString = yesterday.toDateString();
 
                 if (chatDateString === todayString) {
-                    if (!chat.bin) {
-                        todayChatsTemp.push(chat);
-                    }
+                    todayChatsTemp.push(chat);
                 } else if (chatDateString === yesterdayString) {
-                    if (!chat.bin) {
-                        yesterdayChatsTemp.push(chat);
-                    }
+                    yesterdayChatsTemp.push(chat);
                 } else {
-                    if (!chat.bin) {
-                        last7DaysChatsTemp.push(chat);
-                    }
+                    last7DaysChatsTemp.push(chat);
                 }
             });
 
@@ -52,89 +45,50 @@ const History = ({ allChats }) => {
         fillHistory();
     }, [allChats]);
 
-
     const addToBin = async (chat) => {
         try {
-            const response = await axios.post(`http://localhost:5000/api/chats/set_bin_attribute/${chat.id}`, null, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+            await axios.post(`http://localhost:5000/api/chats/set_bin_attribute/${chat.id}`, null, {
+                headers: { 'Content-Type': 'application/json' }
             });
+
             setTodayChats(todayChats.filter(c => c.id !== chat.id));
             setYesterdayChats(yesterdayChats.filter(c => c.id !== chat.id));
             setLast7DaysChats(last7DaysChats.filter(c => c.id !== chat.id));
-            console.log(response.data);
         } catch (error) {
             console.error('Error:', error);
         }
     };
 
-    return (
-        <div className="history">
-            {todayChats.length > 0 && (
-                <div className="time">
-                    <p>Today</p>
-                    {todayChats
-                        .sort((a, b) => new Date(b.created) - new Date(a.created))
-                        .map(chat => (
-                            <div className={'text'} key={chat.id}>
-                                <a href='#'
-                                   onClick={(e) => {
-                                    e.preventDefault();
-                                    navigate(`/chat/${chat.id}`);
-                                    }}>{chat.text}
-                                </a>
-                                <button onClick={() => addToBin(chat)}>
-                                    <span className="material-symbols-rounded">delete</span>
-                                </button>
-                            </div>
-                        ))}
-                </div>
-            )}
-
-            {yesterdayChats.length > 0 && (
-                <div className="time">
-                    <p>Yesterday</p>
-                    {yesterdayChats
-                        .sort((a, b) => new Date(b.created) - new Date(a.created))
-                        .map(chat => (
-                            <div className={'text'} key={chat.id}>
-                                <a href='#'
-                                   onClick={(e) => {
-                                       e.preventDefault();
-                                       navigate(`/chat/${chat.id}`);
-                                   }}>{chat.text}
-                                </a>
-                                <button onClick={() => addToBin(chat)}>
-                                    <span className="material-symbols-rounded">delete</span>
-                                </button>
-                            </div>
-                        ))}
-                </div>
-            )}
-
-            {last7DaysChats.length > 0 && (
-                <div className="time">
-                    <p>Last 7 days</p>
-                    {last7DaysChats
-                        .sort((a, b) => new Date(b.created) - new Date(a.created))
-                        .map(chat => (
-                            <div className={'text'} key={chat.id}>
-                                <a href='#'
-                                   onClick={(e) => {
-                                       e.preventDefault();
-                                       navigate(`/chat/${chat.id}`);
-                                   }}>{chat.text}
-                                </a>
-                                <button onClick={() => addToBin(chat)}>
-                                    <span className="material-symbols-rounded">delete</span>
-                                </button>
-                            </div>
-                        ))}
-                </div>
-            )}
+    const renderChats = (chats, title) => (
+        <div className="time">
+            <p>{title}</p>
+            {chats
+                .sort((a, b) => new Date(b.created) - new Date(a.created))
+                .map(chat => (
+                    <div className="text" key={chat.id}>
+                        <a href="#" onClick={(e) => {
+                            e.preventDefault();
+                            navigate(`/chat/${chat.id}`);
+                        }}>{chat.text}</a>
+                        <button onClick={() => addToBin(chat)}>
+                            <span className="material-symbols-rounded">delete</span>
+                        </button>
+                    </div>
+                ))}
         </div>
     );
+
+    return (
+        <div className="history">
+            {todayChats.length > 0 && renderChats(todayChats, "Today")}
+            {yesterdayChats.length > 0 && renderChats(yesterdayChats, "Yesterday")}
+            {last7DaysChats.length > 0 && renderChats(last7DaysChats, "Last 7 days")}
+        </div>
+    );
+};
+
+History.propTypes = {
+    allChats: PropTypes.array.isRequired
 };
 
 export default History;

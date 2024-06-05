@@ -20,21 +20,8 @@ const Modal = ({ handleModal, modalOptions, userDetails, notifyNewChat, notifySe
 
     useEffect(() => {
         setUser();
-        const fetchBinChats = async () => {
-            const userId = auth.currentUser.uid;
-            if (userId) {
-                try {
-                    const response = await axios.get(`http://127.0.0.1:5000/api/chats/bins/${userId}`);
-                    setBinChats(response.data.bin_chats);
-                } catch (error) {
-                    console.error("Erreur lors de la récupération des chats de la bin:", error);
-                }
-            }
-        };
-        const url = window.location.href;
-        const id = url.split('/').pop();
-        setChatId(id);
         fetchBinChats();
+        setChatId(window.location.href.split('/').pop());
     }, []);
 
     const setUser = () => {
@@ -43,43 +30,50 @@ const Modal = ({ handleModal, modalOptions, userDetails, notifyNewChat, notifySe
         setEmail(userDetails.email);
     };
 
-    const isValidEmail = (email) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
+    const fetchBinChats = async () => {
+        const userId = auth.currentUser.uid;
+        if (userId) {
+            try {
+                const response = await axios.get(`http://127.0.0.1:5000/api/chats/bins/${userId}`);
+                setBinChats(response.data.bin_chats);
+            } catch (error) {
+                console.error("Erreur lors de la récupération des chats de la bin:", error);
+            }
+        }
     };
 
+    const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
     const modifyUser = async () => {
-        const user = auth.currentUser;
-        const data = {
-            firstName: fname,
-            lastName: lname,
-            email: email,
-        };
-
-        if (user && isValidEmail(email)) {
+        if (isValidEmail(email)) {
             try {
-                const userId = user.uid;
-                const response = await axios.post(`http://127.0.0.1:5000/api/users/modify/${userId}`, data);
-
+                await axios.post(`http://127.0.0.1:5000/api/users/modify/${auth.currentUser.uid}`, {
+                    firstName: fname,
+                    lastName: lname,
+                    email: email,
+                });
                 notifySettings();
                 toast.success("User informations updated successfully.", { position: "top-right" });
             } catch (error) {
-                if (error.code === 'auth/requires-recent-login') {
-                    toast.error("Please re-authenticate and try again.", { position: "top-right" });
-                    console.error("Erreur d'authentification : l'utilisateur doit se reconnecter", error);
-                } else {
-                    toast.error("User update error.", { position: "top-right" });
-                    console.error("Erreur lors de la modification des données de l'utilisateur:", error);
-                }
+                handleError(error, "User update error.");
             }
         } else {
-            console.log('email invalide');
+            console.log('Email invalide');
         }
+    };
+
+    const handleError = (error, defaultMessage) => {
+        if (error.code === 'auth/requires-recent-login') {
+            toast.error("Please re-authenticate and try again.", { position: "top-right" });
+        } else {
+            toast.error(defaultMessage, { position: "top-right" });
+        }
+        console.error("Erreur:", error);
     };
 
     const deleteChats = async (chat_uid) => {
         try {
-            const response = await axios.delete(`http://127.0.0.1:5000/api/chats/delete/${chat_uid}`);
+            await axios.delete(`http://127.0.0.1:5000/api/chats/delete/${chat_uid}`);
             setBinChats(binChats.filter(c => c.id !== chat_uid));
         } catch (error) {
             console.error("Erreur lors de la suppression du chat:", error);
@@ -88,15 +82,11 @@ const Modal = ({ handleModal, modalOptions, userDetails, notifyNewChat, notifySe
 
     const restoreChats = async (chat_uid) => {
         try {
-            const response = await axios.post(`http://localhost:5000/api/chats/set_bin_attribute/${chat_uid}`, null, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+            await axios.post(`http://localhost:5000/api/chats/set_bin_attribute/${chat_uid}`);
             setBinChats(binChats.filter(c => c.id !== chat_uid));
             notifyNewChat();
         } catch (error) {
-            console.error("Erreur lors de la suppression du chat:", error);
+            console.error("Erreur lors de la restauration du chat:", error);
         }
     };
 
@@ -105,11 +95,8 @@ const Modal = ({ handleModal, modalOptions, userDetails, notifyNewChat, notifySe
             const response = await axios.get(`http://127.0.0.1:5000/api/analyses/get/${chatId}`);
             const analyse = response.data;
             const newWindow = window.open('', '_blank');
-            newWindow.document.write('<html><head><title>JSON data</title></head><body>');
-            newWindow.document.write('<pre>' + JSON.stringify(analyse, null, 2) + '</pre>');
-            newWindow.document.write('</body></html>');
+            newWindow.document.write('<html><head><title>JSON data</title></head><body><pre>' + JSON.stringify(analyse, null, 2) + '</pre></body></html>');
             newWindow.document.close();
-
         } catch (error) {
             console.error("Erreur lors de la récupération des données de l'analyse:", error);
         }
@@ -122,40 +109,34 @@ const Modal = ({ handleModal, modalOptions, userDetails, notifyNewChat, notifySe
             return;
         }
         handleModal();
-        toPng(element)
-            .then((dataUrl) => {
-                download(dataUrl, chatId + ".png");
-            })
-            .catch((err) => {
-                console.error('oops, something went wrong!', err);
-            });
+        toPng(element, {
+            cacheBust: true,
+            skipFonts: true
+        }).then((dataUrl) => {
+            download(dataUrl, `${chatId}.png`);
+        }).catch((err) => {
+            console.error('oops, something went wrong!', err);
+        });
     };
-
 
     return (
         <div className="modal">
-            <div className={"modal-content " + modalOptions.size + " animate__animated animate__fadeInUp"}>
-                <div className="modal-header ">
+            <div className={`modal-content ${modalOptions.size} animate__animated animate__fadeInUp`}>
+                <div className="modal-header">
                     <h2>{modalOptions.title}</h2>
                     <button onClick={handleModal}>
-                        <span className="material-symbols-rounded">
-                            close
-                        </span>
+                        <span className="material-symbols-rounded">close</span>
                     </button>
                 </div>
                 {modalOptions.title === 'Export' && (
                     <div className="content">
-                        <div  onClick={exportJson} className="option">
+                        <div onClick={exportJson} className="option">
                             <p>Export as JSON</p>
-                            <span className="material-symbols-rounded">
-                                description
-                            </span>
+                            <span className="material-symbols-rounded">description</span>
                         </div>
                         <div onClick={handleCapture} className="option">
                             <p>Export as PNG</p>
-                            <span className="material-symbols-rounded">
-                                add_photo_alternate
-                            </span>
+                            <span className="material-symbols-rounded">add_photo_alternate</span>
                         </div>
                     </div>
                 )}
@@ -166,14 +147,10 @@ const Modal = ({ handleModal, modalOptions, userDetails, notifyNewChat, notifySe
                                 <a href={`/chat/${chat.id}`}>{chat.text}</a>
                                 <div className="buttons-deleted">
                                     <button onClick={() => restoreChats(chat.id)}>
-                                        <span className="material-symbols-rounded">
-                                            restore_from_trash
-                                        </span>
+                                        <span className="material-symbols-rounded">restore_from_trash</span>
                                     </button>
                                     <button onClick={() => deleteChats(chat.id)}>
-                                        <span className="material-symbols-rounded">
-                                            delete
-                                        </span>
+                                        <span className="material-symbols-rounded">delete</span>
                                     </button>
                                 </div>
                             </div>
@@ -181,35 +158,50 @@ const Modal = ({ handleModal, modalOptions, userDetails, notifyNewChat, notifySe
                     </div>
                 )}
                 {modalOptions.title === "Account settings" && userDetails && (
-                    <div className="content-profile">
-                        <div className="input-line">
-                            <Input nameInput="Name" disabled={auth.currentUser.displayName} value={fname} onChange={(e => setFname(e.target.value))}
-                                   idInput="name" typeInput="text"></Input>
-                            <Input nameInput="Last name" disabled={auth.currentUser.displayName} value={lname}
-                                   onChange={(e => setLname(e.target.value))} idInput="last_name" typeInput="text"></Input>
-                        </div>
-                        <Input nameInput="Email" disabled={true} idInput="email" value={email}
-                               onChange={(e => setEmail(e.target.value))} typeInput="email"></Input>
-                        <div className="google">
-                            <img src={GLogo} alt="google" />
-                            <span className="google-text">Connected with Google</span>
-                            {auth.currentUser.displayName && (
+                    <>
+                        <div className="content-profile">
+                            <div className="input-line">
+                                <Input
+                                    nameInput="Name"
+                                    disabled={!!auth.currentUser.displayName}
+                                    value={fname}
+                                    onChange={(e) => setFname(e.target.value)}
+                                    idInput="name"
+                                    typeInput="text"
+                                />
+                                <Input
+                                    nameInput="Last name"
+                                    disabled={!!auth.currentUser.displayName}
+                                    value={lname}
+                                    onChange={(e) => setLname(e.target.value)}
+                                    idInput="last_name"
+                                    typeInput="text"
+                                />
+                            </div>
+                            <Input
+                                nameInput="Email"
+                                disabled
+                                idInput="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                typeInput="email"
+                            />
+                            <div className="google">
+                                <img src={GLogo} alt="google" />
+                                <span className="google-text">Connected with Google</span>
                                 <span className="material-symbols-rounded">
-                                    check_circle
+                                    {auth.currentUser.displayName ? "check_circle" : "cancel"}
                                 </span>
-                            )}
-                            {!auth.currentUser.displayName && (
-                                <span className="material-symbols-rounded">
-                                    cancel
-                                </span>
-                            )}
+                            </div>
                         </div>
-                    </div>
-                )}
-                {modalOptions.title === "Account settings" && (
-                    <div className="modal-btn">
-                        <Button name="Modify" disabled={auth.currentUser.displayName} onClick={modifyUser}></Button>
-                    </div>
+                        <div className="modal-btn">
+                            <Button
+                                name="Modify"
+                                disabled={!!auth.currentUser.displayName}
+                                onClick={modifyUser}
+                            />
+                        </div>
+                    </>
                 )}
             </div>
         </div>

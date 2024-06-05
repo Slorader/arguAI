@@ -15,23 +15,19 @@ const Message = ({ type, value, chatId, analyse, loading, setDisabled }) => {
     const paragraphRef = useRef(null);
     const loadingRef = useRef(null);
 
-
     useEffect(() => {
         if (type === "bot" && chatId && analyse) {
             const animationPlayed = localStorage.getItem(`animationPlayed_${chatId}`);
             if (animationPlayed) {
                 displayFullText();
                 setDisabled();
-            } else {
-                if (!loading)
-                {
-                    loadingRef.current.style.display = "none";
-                    paragraphRef.current.style.display = "block";
-                    animateText();
-                }
+            } else if (!loading) {
+                loadingRef.current.style.display = "none";
+                paragraphRef.current.style.display = "block";
+                animateText();
             }
         }
-    }, [type, chatId, analyse]);
+    }, [type, chatId, analyse, loading]);
 
     const displayFullText = () => {
         setText(formatFullText(analyse));
@@ -98,9 +94,9 @@ const Message = ({ type, value, chatId, analyse, loading, setDisabled }) => {
             if (index > fullText.length) {
                 clearInterval(intervalId);
                 localStorage.setItem(`animationPlayed_${chatId}`, 'true');
+                setDisabled();
             }
         }, 10);
-        setDisabled();
     };
 
     return (

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { auth, db } from "./Firebase/firebase.jsx";
 import Logo from "../../../public/images/AR_notext_white.png";
@@ -18,76 +18,54 @@ function App() {
     const [isSideBarOpen, setIsSideBarOpen] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalOptions, setModalOptions] = useState([]);
-    const chatClass = `chat ${isSideBarOpen ? '' : 'chat-fullscreen '}`;
     const [newChatNotification, setNewChatNotification] = useState(false);
     const [updateSettings, setUpdateSettings] = useState(false);
-    const [updateSideBarSettings, setUpdateSideBarSettings] = useState(false);
 
-    const notifySettings = () => {
-        setUpdateSettings(!updateSettings);
-    }
+    const toggleState = (setter) => () => setter(prev => !prev);
 
-    const notifySideBarSettings = () => {
-        setUpdateSideBarSettings(!updateSideBarSettings);
-    }
+    const handleSideBar = toggleState(setIsSideBarOpen);
+    const handleModal = toggleState(setIsModalOpen);
+    const notifySettings = toggleState(setUpdateSettings);
+    const notifyNewChat = toggleState(setNewChatNotification);
 
-    const notifyNewChat = () => {
-        setNewChatNotification(!newChatNotification);
-    };
+    const fetchUserDetails = useCallback(async (user) => {
+        if (user.displayName) {
+            const [firstName, lastName] = user.displayName.split(" ");
+            setUser({ ...user, firstName, lastName });
+        } else {
+            try {
+                const userDocRef = doc(db, "Users", user.uid);
+                const userDocSnap = await getDoc(userDocRef);
 
-    const handleSideBar = () => {
-        setIsSideBarOpen(!isSideBarOpen);
-    };
-
-    const handleModal = () => {
-        setIsModalOpen(!isModalOpen);
-    };
+                if (userDocSnap.exists()) {
+                    const { firstName, lastName } = userDocSnap.data();
+                    setUser({ ...user, firstName, lastName });
+                } else {
+                    console.log("User data not found in database.");
+                }
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            }
+        }
+    }, []);
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
-            if (user != null) {
-                if (user.displayName) {
-                    const displayNameParts = user.displayName.split(" ");
-                    const firstName = displayNameParts[0];
-                    const lastName = displayNameParts[1];
-
-                    setUser({
-                        ...user,
-                        firstName: firstName,
-                        lastName: lastName,
-                    });
-                } else {
-                    try {
-                        const userDocRef = doc(db, "Users", user.uid);
-                        const userDocSnap = await getDoc(userDocRef);
-
-                        if (userDocSnap.exists()) {
-                            const userData = userDocSnap.data();
-                            setUser({
-                                ...user,
-                                firstName: userData.firstName,
-                                lastName: userData.lastName,
-                            });
-                        } else {
-                            console.log("User data not found in database.");
-                        }
-                    } catch (error) {
-                        console.error("Error fetching user data:", error);
-                    }
-                }
+            if (user) {
+                await fetchUserDetails(user);
             } else {
                 setUser(null);
             }
             setIsLoading(false);
-            notifySideBarSettings();
         });
         return unsubscribe;
-    }, [updateSettings]);
+    }, [fetchUserDetails]);
 
-    const sidebarClass = `sideBar ${isSideBarOpen ? '' : 'sideBar-closed '}`;
+    const sidebarClass = `sideBar ${isSideBarOpen ? '' : 'sideBar-closed'}`;
+    const chatClass = `chat ${isSideBarOpen ? '' : 'chat-fullscreen'}`;
 
     if (isLoading) {
-        return <div className="loading"><img src={Logo} alt="logo"/></div>;
+        return <div className="loading"><img src={Logo} alt="logo" /></div>;
     }
 
     return (
@@ -100,11 +78,11 @@ function App() {
                     user={user}
                     handleModal={handleModal}
                     notifyNewChat={newChatNotification}
-                    updateSideBarSettings={updateSideBarSettings}
+                    updateSideBarSettings={updateSettings}
                 />
             )}
             <Routes>
-                <Route path="/chat" element={!user ? <Navigate to="/login" /> : <Home
+                <Route path="/chat" element={user ? <Home
                     className={sidebarClass}
                     handleSideBar={handleSideBar}
                     isSideBarOpen={isSideBarOpen}
@@ -114,10 +92,10 @@ function App() {
                     modalOptions={modalOptions}
                     setModalOptions={setModalOptions}
                     notifyNewChat={notifyNewChat}
-                />} />
+                /> : <Navigate to="/login" />} />
                 <Route path="/login" element={user ? <Navigate to="/chat" /> : <Login />} />
                 <Route path="/register" element={user ? <Navigate to="/chat" /> : <Register />} />
-                <Route path="/chat/:chatId" element={!user ? <Navigate to="/login" /> : <ChatContainer
+                <Route path="/chat/:chatId" element={user ? <ChatContainer
                     className={sidebarClass}
                     handleSideBar={handleSideBar}
                     isSideBarOpen={isSideBarOpen}
@@ -126,7 +104,7 @@ function App() {
                     isModalOpen={isModalOpen}
                     modalOptions={modalOptions}
                     setModalOptions={setModalOptions}
-                />} />
+                /> : <Navigate to="/login" />} />
                 <Route path="*" element={<Navigate to="/chat" />} />
             </Routes>
             <ToastContainer />

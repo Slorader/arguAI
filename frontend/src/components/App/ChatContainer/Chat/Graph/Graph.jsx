@@ -94,7 +94,6 @@ const drawGraph = (data) => {
     node.append('title')
         .text(d => d.text);
 
-    // Adding middle points and labels for each edge
     const middlePoints = edges.map((edge, index) => ({
         id: `middle-${index}`,
         type: edge.type,

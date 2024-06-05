@@ -1,38 +1,42 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import Input from "../../Form/Input/Input.jsx";
 import Button from "../../Form/Button/Button.jsx";
 import Logo from '../../../../../public/images/AR_white.png';
 import '../Login/login.css';
 import "../../Form/Input/input.css";
 import "../../Form/Button/buttons.css";
-import {createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup} from "firebase/auth"
-import {auth, db} from "../../Firebase/firebase.jsx"
-import {setDoc, doc, getDoc} from "firebase/firestore"
-import {toast} from "react-toastify";
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth, db } from "../../Firebase/firebase.jsx";
+import { setDoc, doc, getDoc } from "firebase/firestore";
+import { toast } from "react-toastify";
 import Google from "../../../../../public/images/google.png";
 
 const Register = () => {
+    const [formData, setFormData] = useState({
+        fname: '',
+        lname: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+    });
 
-    const [fname, setFname] = useState('');
-    const [lname, setLname] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassord] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+    const { fname, lname, email, password, confirmPassword } = formData;
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
 
     const handleRegister = async (e) => {
         e.preventDefault();
 
         if (!fname || !lname || !email || !password || !confirmPassword) {
-            toast.error("All fields are required.", {
-                position: "top-right",
-            });
+            toast.error("All fields are required.", { position: "top-right" });
             return;
         }
 
         if (confirmPassword !== password) {
-            toast.error("Passwords do not match.", {
-                position: "top-right",
-            });
+            toast.error("Passwords do not match.", { position: "top-right" });
             return;
         }
 
@@ -41,19 +45,15 @@ const Register = () => {
             const user = auth.currentUser;
             if (user) {
                 await setDoc(doc(db, "Users", user.uid), {
+                    uid: user.uid,
                     email: user.email,
                     firstName: fname,
                     lastName: lname,
-                    uid: user.uid,
                 });
             }
-            toast.success("User registered successfully!", {
-                position: "top-right",
-            });
+            toast.success("User registered successfully!", { position: "top-right" });
         } catch (error) {
-            toast.error("Email already exists.", {
-                position: "top-right",
-            });
+            toast.error("Email already exists.", { position: "top-right" });
         }
     };
 
@@ -64,21 +64,20 @@ const Register = () => {
         const userDocRef = doc(db, "Users", uid);
         const userDocSnap = await getDoc(userDocRef);
 
-        if (userDocSnap.exists()) {
+        if (!userDocSnap.exists()) {
+            try {
+                await setDoc(userDocRef, {
+                    uid,
+                    email,
+                    firstName,
+                    lastName,
+                });
+                console.log("New user saved to Firestore successfully.");
+            } catch (error) {
+                console.error("Error saving new user to Firestore:", error);
+            }
+        } else {
             console.log("User already exists in Firestore.");
-            return;
-        }
-
-        try {
-            await setDoc(userDocRef, {
-                uid,
-                email,
-                firstName,
-                lastName,
-            });
-            console.log("New user saved to Firestore successfully.");
-        } catch (error) {
-            console.error("Error saving new user to Firestore:", error);
         }
     };
 
@@ -88,14 +87,10 @@ const Register = () => {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
             await saveUserToFirestore(user);
-            toast.success("Logged in with Google successfully!", {
-                position: "top-right",
-            });
+            toast.success("Logged in with Google successfully!", { position: "top-right" });
         } catch (error) {
-            console.log(error.message);
-            toast.error(error.message, {
-                position: "top-right",
-            });
+            console.error(error.message);
+            toast.error(error.message, { position: "top-right" });
         }
     };
 
@@ -110,8 +105,7 @@ const Register = () => {
                         <span>Start on Argu </span>
                         <span className="colored">AI</span>
                     </div>
-                    <p>Argu AI is a cutting-edge solution for automated argumentative analysis. Our platform, powered by artificial intelligence, is designed to help you analyse and structure arguments efficiently and accurately. Whether you are a student, researcher, professional or simply passionate about debates and argumentation, Argu AI gives you the tools you need to optimise your analyses.
-                    </p>
+                    <p>Argu AI is a cutting-edge solution for automated argumentative analysis. Our platform, powered by artificial intelligence, is designed to help you analyze and structure arguments efficiently and accurately. Whether you are a student, researcher, professional or simply passionate about debates and argumentation, Argu AI gives you the tools you need to optimize your analyses.</p>
                 </div>
                 <div className="login-form">
                     <div className="title">
@@ -123,7 +117,7 @@ const Register = () => {
                         <a href="/login">here</a>
                     </div>
                     <div onClick={handleGoogleSignIn} className="google">
-                        <img src={Google} alt="google"/>
+                        <img src={Google} alt="google" />
                         <span>Continue with Google</span>
                     </div>
                     <div className="separator">
@@ -132,19 +126,48 @@ const Register = () => {
                     </div>
                     <form onSubmit={handleRegister} className="form">
                         <div className="input-line">
-                            <Input name="name" typeInput="text" onChange={(e) => setFname(e.target.value)}
-                                   nameInput="Name" idInput="name" placeholder=""/>
-                            <Input name="lastName" typeInput="text" onChange={(e) => setLname(e.target.value)}
-                                   nameInput="Last name" idInput="lastName" placeholder=""/>
+                            <Input
+                                name="fname"
+                                typeInput="text"
+                                onChange={handleInputChange}
+                                nameInput="First Name"
+                                idInput="fname"
+                                placeholder=""
+                            />
+                            <Input
+                                name="lname"
+                                typeInput="text"
+                                onChange={handleInputChange}
+                                nameInput="Last Name"
+                                idInput="lname"
+                                placeholder=""
+                            />
                         </div>
-                        <Input name="email" typeInput="email" onChange={(e) => setEmail(e.target.value)}
-                               nameInput="Email" idInput="registerEmail" placeholder=""/>
-                        <Input name="password" typeInput="password" onChange={(e) => setPassord(e.target.value)}
-                               nameInput="Password" idInput="passwordEmail" placeholder=""/>
-                        <Input name="confirmPassword" typeInput="password"
-                               onChange={(e) => setConfirmPassword(e.target.value)} nameInput="Confirm password"
-                               idInput="confirmPasswordEmail" placeholder=""/>
-                        <Button type="submit" name="Register"/>
+                        <Input
+                            name="email"
+                            typeInput="email"
+                            onChange={handleInputChange}
+                            nameInput="Email"
+                            idInput="email"
+                            placeholder=""
+                        />
+                        <Input
+                            name="password"
+                            typeInput="password"
+                            onChange={handleInputChange}
+                            nameInput="Password"
+                            idInput="password"
+                            placeholder=""
+                        />
+                        <Input
+                            name="confirmPassword"
+                            typeInput="password"
+                            onChange={handleInputChange}
+                            nameInput="Confirm Password"
+                            idInput="confirmPassword"
+                            placeholder=""
+                        />
+                        <Button type="submit" name="Register" />
                     </form>
                 </div>
             </div>
