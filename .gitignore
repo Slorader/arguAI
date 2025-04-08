@@ -6,3 +6,4 @@ backend/train/classification/models/tfidf_vectorizer.pkl
 backend/train/relations/logs
 backend/train/relations/models
 backend/train/relations/results
+backend/firebase_credentials.json

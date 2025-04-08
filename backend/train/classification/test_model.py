@@ -93,9 +93,9 @@ def create_json_output(sentences, predictions):
 
     return json.dumps(output, indent=4)
 
-print("Entrez du texte à classifier (classsification) (tapez 'exit' pour quitter) :")
+print("Enter your text to be classified  (type 'exit' to quit) :")
 while True:
-    user_input = input("Texte : ")
+    user_input = input("Text : ")
     if user_input.lower() == 'exit':
         break
 
@@ -106,7 +106,7 @@ while True:
     output_json = create_json_output(sentences, predictions)
     print(output_json)
 
-print("Fin de la classification.")
+print("End of classification.")
 
 
 """

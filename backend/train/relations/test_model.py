@@ -145,3 +145,20 @@ while True:
     print(output_json)
 
 print("Fin de la classification.")
+
+
+"""
+The RGU School of Computing is a great place to study. The staff are friendly, the labs are state-of-the-art, and the subjects are engaging. So you will have an amazing time during your degree.
+
+Fall is the best time to visit America's great cities, beaches, and mountains. The foliage is breath-taking, the weather is cooler and the crowds are gone. So, you can really relax and enjoy yourself. 
+
+Investing in new economic energies and adopting renewable energy is crucial for a sustainable, environmentally friendly future. Fossil fuels are finite resources that contribute to climate change. Renewable energy sources are environmentally sustainable and reduce greenhouse gas emissions, so transitioning to renewable energy is necessary to mitigate the negative environmental impact of fossil fuels.
+
+Online education is a revolutionary way to learn. It offers flexibility, reduces commuting time, and provides access to a wide range of courses. Thus, it can accommodate diverse learning needs and schedules.
+
+Regular exercise is essential for maintaining good health. It improves cardiovascular fitness, strengthens muscles, and boosts mental well-being. Therefore, incorporating physical activity into your daily routine is vital for a healthy lifestyle.
+
+Reading books regularly enhances cognitive skills. It improves vocabulary, increases knowledge, and stimulates imagination. Hence, making time for reading can significantly benefit your intellectual growth.
+
+A balanced diet is crucial for overall health. It provides essential nutrients, maintains energy levels, and prevents chronic diseases. So, eating a variety of healthy foods is important for sustaining good health.
+"""

@@ -1,26 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
-const Input = ({ typeInput, idInput, onChange, value, placeholder, disabled, nameInput }) => {
+const Input = (props) => {
     const [hasValue, setHasValue] = useState(false);
 
-    useEffect(() => {
-        setHasValue(value.length > 0);
-    }, [value]);
+    const handleInputBlur = (event) => {
+        setHasValue(event.target.value.length > 0);
+    };
 
     return (
         <div className="input">
             <input
-                type={typeInput}
-                id={idInput}
+                type={props.typeInput}
+                id={props.idInput}
                 autoComplete="off"
-                onBlur={(e) => setHasValue(e.target.value.length > 0)}
-                onChange={onChange}
-                value={value}
-                placeholder={placeholder}
-                disabled={disabled}
+                onBlur={handleInputBlur}
+                onChange={props.onChange}
+                value={props.value}
+                placeholder={props.placeholder}
+                disabled={props.disabled}
             />
-            <label htmlFor={idInput} className={hasValue ? 'active' : ''}>
-                {nameInput}
+            <label htmlFor={props.idInput} className={hasValue ? 'active' : ''}>
+                {props.nameInput}
             </label>
         </div>
     );
