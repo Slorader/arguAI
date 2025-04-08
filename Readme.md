@@ -2,7 +2,7 @@
 
 Argu AI est un projet expérimental d'analyse argumentative automatisée. Il combine plusieurs modèles d'intelligence artificielle pour détecter, classer et relier des segments d'arguments dans des textes.
 
-Le pipeline s'appuie sur :
+Les différents modèles d'IA utilisés :
 - **spaCy** avec le modèle `en_core_web_sm` pour la segmentation des textes en unités argumentatives,
 - **RandomForestClassifier** pour identifier les types de segments (conclusion, sous-conclusion, etc.),
 - **DistilBERT** pour déterminer les relations entre les segments.
